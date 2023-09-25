@@ -43,11 +43,12 @@ export default function VacationRequestForm({ closeModal }) {
 				userId: data?.user.id,
 			}),
 		})
-			.then((res) => {
-				if (res.status === 200) {
-					toast.success("Request Submitted.");
-					closeModal();
-				} else throw new Error("Something went Wrong!");
+			.then(async (res) => {
+				return await res.json();
+			})
+			.then((data) => {
+				toast.success("Request Submitted.");
+				closeModal();
 			})
 			.catch((error) => toast.error("Something went wrong!"));
 	};

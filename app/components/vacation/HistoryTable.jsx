@@ -1,5 +1,3 @@
-"use client";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,40 +6,38 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import S from "underscore.string";
 
 import moment from "moment";
 import { FaFileExport } from "react-icons/fa";
 import { exportToCsv } from "helpers/vacation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "api/auth/[...nextauth]/route";
+import ExportDataButton from "./ExportDataButton";
 
-export default function HistoryTable() {
-	const { data } = useSession();
+async function getData(userId) {
+	let res = await fetch(`${process.env.URL}/api/vacation/load/${userId}`, {
+		method: "GET",
+	});
 
-	const [requests, setRequests] = useState([]);
+	if (!res.ok) {
+		throw new Error("Something went wrong!");
+	}
 
-	useEffect(() => {
-		if (data?.user?.id !== undefined) {
-			fetch(`/api/vacation/load/${data?.user?.id}`, {
-				method: "GET",
-			})
-				.then((res) => res.json())
-				.then((data) => {
-					setRequests(data);
-				});
-		}
-	}, [data?.user?.id]);
+	return res.json();
+}
+
+export default async function HistoryTable() {
+	const { user } = await getServerSession(authOptions);
+
+	
+
+	let requests = await getData(user?.id);
 
 	return (
 		<>
-			<button
-				onClick={() => {
-					exportToCsv(requests);
-				}}
-				className="rounded-3xl py-2 self-end px-4 w-fit bg-green-500 text-white font-medium flex flex-row items-center gap-3"
-			>
-				Export History <FaFileExport />
-			</button>
+			<ExportDataButton data={requests} />
 			<TableContainer component={Paper}>
 				<Table sx={{ minWidth: 650 }} aria-label="simple table">
 					<TableHead>
