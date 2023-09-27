@@ -1,26 +1,33 @@
 "use client";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { ClipLoader } from "react-spinners";
 
 export default function LoginForm() {
 	const router = useRouter();
+	const [loading, setLoading] = useState(false);
 
 	const handleFormSubmission = (e) => {
 		e.preventDefault();
 
 		let formData = Object.fromEntries(new FormData(e.target).entries());
+
+		formData = { ...formData, username: formData.username.toLowerCase() };
+		setLoading(true);
 		signIn("credentials", {
 			...formData,
 			redirect: false,
 			callbackUrl: "/",
 		}).then((res) => {
 			if (res?.error) {
+				setLoading(false);
 				toast.error(res.error);
 				return;
 			} else {
+				setLoading(false);
 				toast.success("Logged In");
 				router.push("/");
 			}
@@ -52,7 +59,11 @@ export default function LoginForm() {
 				required
 			/>
 			<button className="rounded-3xl bg-[#1770b8] text-white text-xl font-semibold py-2 w-full mt-4">
-				Login
+				{loading ? (
+					<ClipLoader color="#FFF" className="block m-auto" size={20} />
+				) : (
+					"Login"
+				)}
 			</button>
 		</form>
 	);

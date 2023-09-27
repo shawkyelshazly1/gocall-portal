@@ -7,8 +7,6 @@ import React from "react";
 export default async function Page() {
 	const { user } = await getServerSession(authOptions);
 
-	console.log(user);
-
 	return (
 		<div className="w-full h-full container grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-20  py-6">
 			<div className="flex flex-col">
@@ -19,7 +17,7 @@ export default async function Page() {
 					width={250}
 					height={250}
 					alt="profile_image"
-				/>
+				/>s
 				<div className="flex flex-col gap-4 mt-12">
 					<h1 className="font-medium text-xl text-slate-400">
 						Employee Details
