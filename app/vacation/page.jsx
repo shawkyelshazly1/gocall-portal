@@ -1,20 +1,38 @@
-import HistoryTable from "@components/vacation/HistoryTable";
 import RequestVacationDialog from "@components/vacation/RequestVacationDialog";
 import VacationBalanceInfo from "@components/vacation/VacationBalanceInfo";
-import React from "react";
+import { authOptions } from "api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
+import React, { Suspense } from "react";
+import { ClipLoader } from "react-spinners";
 
-export default function Page() {
+async function getData(userId) {
+	let res = await fetch(`${process.env.URL}/api/vacation/load/${userId}`, {
+		method: "GET",
+	});
+
+	if (!res.ok) {
+		throw new Error("Something went wrong!");
+	}
+
+	return res.json();
+}
+
+export default async function Page() {
+	const { user } = await getServerSession(authOptions);
+
+	let userRequests = getData(user?.id);
+
 	return (
 		<div className="w-full h-full flex flex-col container mt-6 gap-12">
 			<div className="flex flex-row gap-6 self-end w-fit">
 				<RequestVacationDialog />
-				{/* <button className="rounded-3xl py-2 text-xl px-4 bg-green-500 text-white font-medium flex flex-row items-center gap-3">
-					Export History <FaFileExport />
-				</button> */}
 			</div>
 			<VacationBalanceInfo />
-
-			<HistoryTable />
+			<Suspense
+				fallback={
+					<ClipLoader color="blue" className="block m-auto" size={20} />
+				}
+			></Suspense>
 		</div>
 	);
 }

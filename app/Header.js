@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -18,6 +17,7 @@ import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import S from "underscore.string";
 import { FaUser } from "react-icons/fa";
+import Link from "next/link";
 
 const pages = ["home", "vacation"];
 const settings = ["profile", "Logout"];
@@ -88,19 +88,13 @@ export default function Header() {
 							}}
 						>
 							{pages.map((page) => (
-								<MenuItem
-									key={page}
-									onClick={() => {
-										page === "home"
-											? router.push(`/`)
-											: router.push(`/${page}`);
-										handleCloseNavMenu();
-									}}
-								>
-									<Typography color="#000" textAlign="center">
-										{page}
-									</Typography>
-								</MenuItem>
+								<Link href={page === "home" ? "/" : `/${page}`} key={page}>
+									<MenuItem>
+										<Typography color="#000" textAlign="center">
+											{page}
+										</Typography>
+									</MenuItem>
+								</Link>
 							))}
 						</Menu>
 					</Box>
@@ -121,20 +115,17 @@ export default function Header() {
 						}}
 					>
 						{pages.map((page) => (
-							<Button
-								key={page}
-								onClick={() => {
-									handleCloseNavMenu();
-									page === "home" ? router.push(`/`) : router.push(`/${page}`);
-								}}
-								sx={{
-									my: 2,
-									display: "block",
-									fontWeight: "700",
-								}}
-							>
-								{page}
-							</Button>
+							<Link href={page === "home" ? "/" : `/${page}`} key={page}>
+								<Button
+									sx={{
+										my: 2,
+										display: "block",
+										fontWeight: "700",
+									}}
+								>
+									{page}
+								</Button>
+							</Link>
 						))}
 					</Box>
 

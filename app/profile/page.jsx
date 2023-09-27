@@ -17,7 +17,7 @@ export default async function Page() {
 					width={250}
 					height={250}
 					alt="profile_image"
-				/>s
+				/>
 				<div className="flex flex-col gap-4 mt-12">
 					<h1 className="font-medium text-xl text-slate-400">
 						Employee Details
