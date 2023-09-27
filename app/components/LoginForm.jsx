@@ -1,7 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
@@ -9,6 +9,8 @@ import { ClipLoader } from "react-spinners";
 export default function LoginForm() {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
+
+	const callbackUrl = useSearchParams().get("callbackUrl");
 
 	const handleFormSubmission = (e) => {
 		e.preventDefault();
@@ -20,7 +22,6 @@ export default function LoginForm() {
 		signIn("credentials", {
 			...formData,
 			redirect: false,
-			callbackUrl: "/",
 		}).then((res) => {
 			if (res?.error) {
 				setLoading(false);
@@ -29,7 +30,7 @@ export default function LoginForm() {
 			} else {
 				setLoading(false);
 				toast.success("Logged In");
-				router.push("/");
+				router.push(callbackUrl);
 			}
 		});
 	};

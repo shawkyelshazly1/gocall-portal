@@ -1,21 +1,21 @@
+import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
 	// getting token to middleware
-	function middleware(req) {
-		if (
-			req.nextUrl.pathname === "/vacation/manage" &&
-			req.nextauth.token?.user?.position !== "supervisor"
-		) {
-			return NextResponse.redirect(`${process.env.NEXTAUTH_URL}/vacation`);
+	async function middleware(req) {
+		const token = await getToken({ req });
+		const isAuthenticated = !!token;
+
+		// login page and not authenticated
+		if (req.nextUrl.pathname.startsWith("/login") && isAuthenticated) {
+			return NextResponse.redirect(new URL("/", req.url));
 		}
 	},
 	{
-		callbacks: {
-			authorized: ({ token }) => !!token,
+		pages: {
+			signIn: "/login",
 		},
 	}
 );
-
-export const config = { matcher: ["/vacation/manage"] };

@@ -2,7 +2,6 @@ import HistoryTable from "@components/vacation/HistoryTable";
 import RequestVacationDialog from "@components/vacation/RequestVacationDialog";
 import VacationBalanceInfo from "@components/vacation/VacationBalanceInfo";
 import React from "react";
-import { FaFileExport } from "react-icons/fa";
 
 export default function Page() {
 	return (
