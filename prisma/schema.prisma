@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("POSTGRES_CONNECTION_URL_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_CONNECTION_URL_URL_NON_POOLING") // uses a direct connection
+  directUrl = env("POSTGRES_CONNECTION_URL_PRISMA_URL") // uses a direct connection
 }
 
 model Department {
@@ -48,15 +48,16 @@ model Employee {
 
 enum Position {
   representative
-  teamLead
+  team_lead
   supervisor
-  qualityAnalyst
+  quality_analyst
   trainer
   hr
   rtm
   it
-  operationsManager
+  operations_manager
   ceo
+  general_manager
 }
 
 model VacationRequest {

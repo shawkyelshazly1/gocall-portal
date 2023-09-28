@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Position" AS ENUM ('representative', 'teamLead', 'supervisor', 'qualityAnalyst', 'trainer', 'hr', 'rtm', 'it');
+CREATE TYPE "Position" AS ENUM ('representative', 'team_lead', 'supervisor', 'quality_analyst', 'trainer', 'hr', 'rtm', 'it', 'operations_manager', 'ceo', 'general_manager');
 
 -- CreateEnum
 CREATE TYPE "VacationRequestStatus" AS ENUM ('pending', 'approved', 'denied');
