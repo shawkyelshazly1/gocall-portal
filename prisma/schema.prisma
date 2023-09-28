@@ -11,20 +11,39 @@ datasource db {
   directUrl = env("POSTGRES_CONNECTION_URL_URL_NON_POOLING") // uses a direct connection
 }
 
-model User {
+model Department {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  parentDept     Department?  @relation("SubDepartments", fields: [parentId], references: [id])
+  parentId       Int?
+  subDepartments Department[] @relation("SubDepartments")
+  employees      Employee[]   @relation("DepartmentEmployees")
+}
+
+model LoginDetails {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employeeId Int      @unique
+}
+
+model Employee {
   id               Int               @id @default(autoincrement())
   email            String            @unique
-  username         String            @unique
-  password         String
   firstName        String
   lastName         String
   position         Position          @default(representative)
-  manager          User?             @relation("Employees", fields: [managerId], references: [id])
-  managerId        Int? // The ID of the manager (self-referential relationship)
-  employees        User[]            @relation("Employees") // A manager can have many employees
+  department       Department        @relation("DepartmentEmployees", fields: [departmentId], references: [id])
+  departmentId     Int
+  manager          Employee?         @relation("ManagerEmployees", fields: [managerId], references: [id])
+  managerId        Int?
+  subordinates     Employee[]        @relation("ManagerEmployees")
   vacationBalance  Int               @default(21)
   VacationRequest  VacationRequest[]
-  approvedRequests VacationRequest[] @relation("ApprovedByUser")
+  approvedRequests VacationRequest[] @relation("approvedByManager")
+  LoginDetails     LoginDetails?
 }
 
 enum Position {
@@ -36,19 +55,21 @@ enum Position {
   hr
   rtm
   it
+  operationsManager
+  ceo
 }
 
 model VacationRequest {
-  id             Int                   @id @default(autoincrement())
-  from           DateTime
-  to             DateTime
-  reason         VacationReason
-  createdAt      DateTime              @default(now())
-  approvalStatus VacationRequestStatus @default(pending)
-  user           User                  @relation(fields: [userId], references: [id])
-  userId         Int
-  approvedBy     Int?
-  approvedByUser User?                 @relation("ApprovedByUser", fields: [approvedBy], references: [id])
+  id                Int                   @id @default(autoincrement())
+  from              DateTime
+  to                DateTime
+  reason            VacationReason
+  createdAt         DateTime              @default(now())
+  approvalStatus    VacationRequestStatus @default(pending)
+  employee          Employee              @relation(fields: [employeeId], references: [id])
+  employeeId        Int
+  approvedBy        Int?
+  approvedByManager Employee?             @relation("approvedByManager", fields: [approvedBy], references: [id])
 }
 
 enum VacationRequestStatus {
