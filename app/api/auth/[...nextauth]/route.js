@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcryptjs from "bcryptjs";
 import { loginUser } from "helpers/user";
 
 export const authOptions = {
@@ -17,23 +16,19 @@ export const authOptions = {
 			},
 			async authorize(credentials) {
 				if (!credentials || !credentials.username || !credentials.password) {
-					throw new Error("Invalid credentials");
+					throw new Error("Invalid Credentials");
 				}
 
-				const user = await loginUser(
+				const employee = await loginUser(
 					credentials.username,
 					credentials.password
 				);
 
-				if (!user) {
-					throw new Error("Incorrect Username");
+				if (employee) {
+					return Promise.resolve(employee);
+				} else {
+					throw new Error("Invalid username or password.");
 				}
-
-				if (!(await bcryptjs.compare(credentials.password, user.password))) {
-					throw new Error("Wrong Password");
-				}
-
-				return user;
 			},
 		}),
 	],
@@ -42,20 +37,17 @@ export const authOptions = {
 		signIn: "/login",
 	},
 	callbacks: {
-		async jwt({ token, user }) {
-			if (user) {
-				console.log(user);
-				token.user = user;
+		async jwt({ token, employee }) {
+			if (employee) {
+				token.employee = employee;
 			}
 			return token;
 		},
 		async session({ session, token }) {
-			const { password, ...user } = token.user;
-			session.user = user;
+			session.employee = token;
 			return session;
 		},
 		async redirect({ url, baseUrl }) {
-		
 			// Allows relative callback URLs
 			if (url.startsWith("/")) return `${baseUrl}${url}`;
 			// Allows callback URLs on the same origin

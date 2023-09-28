@@ -4,7 +4,6 @@ import { exportToCsv } from "helpers/vacation";
 import { FaFileExport } from "react-icons/fa";
 
 export default function ExportDataButton({ data }) {
-	console.log(data);
 	return (
 		<button
 			onClick={() => {

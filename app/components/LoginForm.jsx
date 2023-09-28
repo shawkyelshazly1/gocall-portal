@@ -12,27 +12,42 @@ export default function LoginForm() {
 
 	const callbackUrl = useSearchParams().get("callbackUrl");
 
-	const handleFormSubmission = (e) => {
+	const handleFormSubmission = async (e) => {
 		e.preventDefault();
 
 		let formData = Object.fromEntries(new FormData(e.target).entries());
 
 		formData = { ...formData, username: formData.username.toLowerCase() };
 		setLoading(true);
-		signIn("credentials", {
+		let result = await signIn("credentials", {
 			...formData,
 			redirect: false,
-		}).then((res) => {
-			if (res?.error) {
-				setLoading(false);
-				toast.error(res.error);
-				return;
-			} else {
-				setLoading(false);
-				toast.success("Logged In");
-				router.push(callbackUrl);
-			}
 		});
+
+		if (result.error) {
+			setLoading(false);
+			toast.error(result.error);
+		} else {
+			setLoading(false);
+			toast.success("Logged In.");
+			router.push(callbackUrl);
+		}
+
+		// .then(async (res) => {
+		// 	return await res.json();
+		// 	// if (res?.error) {
+		// 	// 	setLoading(false);
+		// 	// 	toast.error(res.error);
+		// 	// 	return;
+		// 	// } else {
+		// 	// 	setLoading(false);
+		// 	// 	toast.success("Logged In");
+		// 	// 	router.push(callbackUrl);
+		// 	// }
+		// })
+		// .then((data) => {
+		// 	console.log(data);
+		// });
 	};
 
 	return (
