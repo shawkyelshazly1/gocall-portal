@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUser } from "helpers/user";
+import { loginUser } from "helpers/auth";
 
 export const authOptions = {
 	providers: [
@@ -37,14 +37,14 @@ export const authOptions = {
 		signIn: "/login",
 	},
 	callbacks: {
-		async jwt({ token, employee }) {
-			if (employee) {
-				token.employee = employee;
+		async jwt({ token, user }) {
+			if (user) {
+				token.user = user;
 			}
 			return token;
 		},
 		async session({ session, token }) {
-			session.employee = token;
+			session.user = token.user;
 			return session;
 		},
 		async redirect({ url, baseUrl }) {

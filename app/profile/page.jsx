@@ -3,9 +3,27 @@ import { authOptions } from "api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import React from "react";
-
+import S from "underscore.string";
+import prisma from "../../prisma";
+import EmployeeCard from "@components/profile/Employee Card";
 export default async function Page() {
 	const { user } = await getServerSession(authOptions);
+
+	let subordinates = await prisma.employee.findUnique({
+		where: { id: user.id },
+		include: {
+			subordinates: {
+				select: {
+					firstName: true,
+					lastName: true,
+					position: true,
+					department: true,
+				},
+			},
+		},
+	});
+
+	subordinates = subordinates.subordinates;
 
 	return (
 		<div className="w-full h-full container grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 md:gap-20  py-6">
@@ -23,25 +41,36 @@ export default async function Page() {
 						Employee Details
 					</h1>
 					<DetailsCard title={"First Name"} value={user.firstName} />
-					<DetailsCard title={"Last Name"} value={user.firstName} />
+					<DetailsCard title={"Last Name"} value={user.lastName} />
 					<DetailsCard title={"Email Address"} value={user.email} />
 					<DetailsCard title={"Phone Number"} value={"+201110276945"} />
-					<DetailsCard title={"Position"} value={user.position} />
+					<DetailsCard
+						title={"Position"}
+						value={user.position
+							.split("_")
+							.map((word) => S(word).capitalize().value())
+							.join(" ")}
+					/>
 				</div>
 			</div>
 			<div className="flex flex-col ">
 				<div className="flex flex-col gap-4">
-					<h1 className="font-medium text-xl text-slate-400">Role</h1>
-					<DetailsCard title={"Role"} value={"Operations Manager"} />
+					<h1 className="font-medium text-xl text-slate-400">Department</h1>
+					<DetailsCard
+						title={"Department"}
+						value={user.department.name
+							.split("_")
+							.map((word) => S(word).capitalize().value())
+							.join(" ")}
+					/>
 				</div>
 			</div>
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-4">
 					<h1 className="font-medium text-xl text-slate-400">Team</h1>
-					<DetailsCard title={"HR"} value={"Nadine Mohamed"} />
-					<DetailsCard title={"HR"} value={"Nadine Mohamed"} />
-					<DetailsCard title={"HR"} value={"Nadine Mohamed"} />
-					<DetailsCard title={"HR"} value={"Nadine Mohamed"} />
+					{subordinates?.map((subordinate) => (
+						<EmployeeCard employee={subordinate} key={subordinate.id} />
+					))}
 				</div>
 			</div>
 		</div>

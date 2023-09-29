@@ -1,4 +1,4 @@
-import Header from "./Header";
+import Header from "./components/headers/Header";
 import AuthProvider from "@components/AuthProvider";
 import "./globals.css";
 import { Roboto } from "next/font/google";
