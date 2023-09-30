@@ -1,6 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { NextResponse, userAgent } from "next/server";
 
 export default withAuth(
 	// getting token to middleware
@@ -10,6 +10,14 @@ export default withAuth(
 
 		// login page and not authenticated
 		if (req.nextUrl.pathname.startsWith("/login") && isAuthenticated) {
+			return NextResponse.redirect(new URL("/", req.url));
+		}
+
+		// protect admin pages
+		if (
+			req.nextUrl.pathname.startsWith("/admin") &&
+			token.user.position !== "it"
+		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
 	},
