@@ -21,7 +21,7 @@ import Link from "next/link";
 
 const pages = ["home"];
 const adminPages = ["home", "users", "departments"];
-const settings = ["profile", "Logout"];
+const settings = ["profile", "reset_password", "Logout"];
 
 export default function Header() {
 	const pathname = usePathname();
@@ -204,7 +204,12 @@ export default function Header() {
 										handleCloseUserMenu();
 									}}
 								>
-									<Typography textAlign="center">{setting}</Typography>
+									<Typography textAlign="center">
+										{setting
+											.split("_")
+											.map((value) => S(value).capitalize().value())
+											.join(" ")}
+									</Typography>
 								</MenuItem>
 							))}
 						</Menu>
