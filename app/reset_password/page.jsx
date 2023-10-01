@@ -1,4 +1,4 @@
-import ResetPasswordForm from "@components/resetPassword/ResetPasswordForm";
+import ResetPasswordForm from "@/components/resetPassword/ResetPasswordForm";
 import { Cabin } from "next/font/google";
 import React from "react";
 

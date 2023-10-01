@@ -1,5 +1,5 @@
-import AddUserModal from "@components/admin/users/addUserModal/AddUserModal";
-import UsersTable from "@components/admin/users/UsersTable";
+import AddUserModal from "@/components/admin/users/addUserModal/AddUserModal";
+import UsersTable from "@/components/admin/users/UsersTable";
 import React, { Suspense } from "react";
 import { ClipLoader } from "react-spinners";
 

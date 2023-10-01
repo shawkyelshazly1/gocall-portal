@@ -1,4 +1,4 @@
-import { loadPositions } from "helpers/admin/user";
+import { loadPositions } from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 

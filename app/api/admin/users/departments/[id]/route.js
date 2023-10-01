@@ -2,7 +2,7 @@ import {
 	loadDepartments,
 	loadSubDepartment,
 	loadUsers,
-} from "helpers/admin/user";
+} from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 

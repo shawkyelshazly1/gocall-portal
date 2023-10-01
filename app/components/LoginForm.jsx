@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
+import logoPic from "@/public/logo.png";
 
 export default function LoginForm() {
 	const router = useRouter();
@@ -40,7 +41,15 @@ export default function LoginForm() {
 			className="flex flex-col gap-2 w-[22em] min-h-[26em] items-center justify-center bg-white py-6   px-8 rounded-3xl "
 		>
 			<div className="flex flex-col gap-6 mb-10 items-center mt-4">
-				<Image src={"/logo.png"} width={260} height={260} alt="go-call-logo" />
+				<Image
+					src={logoPic}
+					width={260}
+					height={260}
+					alt="go-call-logo"
+					onError={(e) => {
+						console.error("Error loading image:", e);
+					}}
+				/>
 				<p className="text-[#fcbb1b] font-medium text-lg">Employee Portal</p>
 			</div>
 

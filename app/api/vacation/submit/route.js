@@ -1,4 +1,4 @@
-import { submitVacationRequest } from "helpers/vacation";
+import { submitVacationRequest } from "@/helpers/vacation";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {

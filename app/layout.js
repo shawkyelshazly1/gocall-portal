@@ -1,5 +1,5 @@
 import Header from "./components/headers/Header";
-import AuthProvider from "@components/AuthProvider";
+import AuthProvider from "@/components/AuthProvider";
 import "./globals.css";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";

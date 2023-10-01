@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { loginUser } from "helpers/auth";
+import { loginUser } from "@/helpers/auth";
 
 export const authOptions = {
 	providers: [
@@ -38,12 +38,13 @@ export const authOptions = {
 	},
 	callbacks: {
 		async jwt({ token, user }) {
-			if (user) {
+			if (user && !user.error) {
 				token.user = user;
 			}
 			return token;
 		},
 		async session({ session, token }) {
+			
 			session.user = token.user;
 			return session;
 		},

@@ -1,11 +1,11 @@
-import DetailsCard from "@components/profile/DetailsCard";
-import { authOptions } from "api/auth/[...nextauth]/route";
+import DetailsCard from "@/components/profile/DetailsCard";
+import { authOptions } from "@/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import React from "react";
 import S from "underscore.string";
 import prisma from "../../prisma";
-import EmployeeCard from "@components/profile/Employee Card";
+import EmployeeCard from "@/components/profile/Employee Card";
 export default async function Page() {
 	const { user } = await getServerSession(authOptions);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { exportToCsv } from "helpers/vacation";
+import { exportToCsv } from "@/helpers/vacation";
 import { FaFileExport } from "react-icons/fa";
 
 export default function ExportDataButton({ data }) {

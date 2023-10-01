@@ -1,4 +1,4 @@
-import { loadDepartmentPeople } from "helpers/admin/user";
+import { loadDepartmentPeople } from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 

@@ -1,6 +1,4 @@
-import { authOptions } from "api/auth/[...nextauth]/route";
-import { loadUsers } from "helpers/admin/user";
-import { getServerSession } from "next-auth";
+import { loadUsers } from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 

@@ -18,6 +18,7 @@ import { signOut, useSession } from "next-auth/react";
 import S from "underscore.string";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
+import logoPic from "@/public/logo.png";
 
 const pages = ["home"];
 const adminPages = ["home", "users", "departments"];
@@ -53,7 +54,7 @@ export default function Header() {
 			<Container maxWidth="xl">
 				<Toolbar disableGutters>
 					<Image
-						src="/logo.png"
+						src={logoPic}
 						alt="go-call-logo"
 						width={70}
 						height={70}
@@ -115,7 +116,7 @@ export default function Header() {
 
 					<div className="flex-1 w-full flex md:hidden">
 						<Image
-							src="/logo.png"
+							src={logoPic}
 							alt="go-call-logo"
 							width={50}
 							height={50}

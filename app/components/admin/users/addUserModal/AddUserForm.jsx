@@ -6,7 +6,7 @@ import DepartmentAutoComplete from "./formComponents/DepartmentAutoComplete";
 import ManagerAutoComplete from "./formComponents/ManagerAutoComplete";
 import PositionAutoComplete from "./formComponents/PositionAutoComplete";
 import toast from "react-hot-toast";
-import { exportWFRToCsv } from "helpers/admin/user";
+import { exportWFRToCsv } from "@/helpers/admin/user";
 import { ClipLoader } from "react-spinners";
 
 export default function AddUserForm({ closeModal, openModal }) {

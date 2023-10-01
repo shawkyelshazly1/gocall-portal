@@ -1,5 +1,4 @@
-import { resetUserPassword } from "helpers/user/user";
-import { loadVacationRequests } from "helpers/vacation";
+import { resetUserPassword } from "@/helpers/user/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 

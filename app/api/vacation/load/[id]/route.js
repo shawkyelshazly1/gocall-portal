@@ -1,4 +1,4 @@
-import { loadVacationRequests } from "helpers/vacation";
+import { loadVacationRequests } from "@/helpers/vacation";
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
