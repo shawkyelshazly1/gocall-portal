@@ -1,4 +1,5 @@
 import prisma from "../../../prisma";
+import { Position } from "@prisma/client";
 
 // load all users
 export const loadUsers = async (skip, take) => {
@@ -71,8 +72,79 @@ export const loadUser = async (userId) => {
 				},
 			},
 		});
-	
+
 		return user;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// load Departments
+export const loadDepartments = async () => {
+	try {
+		let departments = await prisma.department.findMany({
+			where: { parentId: null },
+			select: {
+				id: true,
+				name: true,
+			},
+		});
+
+		return departments;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// load Departments
+export const loadSubDepartment = async (deptId) => {
+	try {
+		let subDepartments = await prisma.department.findMany({
+			where: { parentId: deptId },
+			select: {
+				id: true,
+				name: true,
+			},
+		});
+
+		return subDepartments;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// load Departments
+export const loadDepartmentPeople = async (departmentId) => {
+	try {
+		let people = await prisma.employee.findMany({
+			where: {
+				departmentId: departmentId,
+			},
+			select: {
+				firstName: true,
+				lastName: true,
+				id: true,
+			},
+		});
+
+		return people;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// load positions
+export const loadPositions = async () => {
+	try {
+		return Position;
 	} catch (error) {
 		console.error(error);
 	} finally {

@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import S from "underscore.string";
-import ContextMenu from "./ContextMenu";
 
 const columns = [
 	{ field: "id", headerName: "ID", width: 70 },
@@ -57,8 +56,6 @@ export default function UsersTable() {
 		pageSize: 10,
 	});
 	const [loading, setLoading] = useState(false);
-	const [contextMenuPosition, setContextMenuPosition] = useState(null);
-	const [selectedUser, setSelectedUser] = useState(null);
 
 	useEffect(() => {
 		async function loadUsersCount() {
@@ -104,37 +101,8 @@ export default function UsersTable() {
 		getUsers();
 	}, [paginationModel.page]);
 
-	const handleContextMenu = (event) => {
-		event.preventDefault();
-
-		if (!event.currentTarget) {
-			return;
-		}
-		const rowId = Number(event.currentTarget.getAttribute("data-id"));
-
-		const record = users.find((user) => user.id === rowId);
-
-		if (!record) {
-			return;
-		}
-
-		setSelectedUser(record);
-		setContextMenuPosition({ top: event.clientY, left: event.clientX });
-	};
-
-	const handleContextMenuClose = () => {
-		setContextMenuPosition(null);
-	};
-
-	const handleMenuItemClick = (option) => {
-		// Handle the menu item click here
-		console.log(`Clicked: ${option}`);
-		console.log(selectedUser);
-		handleContextMenuClose();
-	};
-
 	return (
-		<div className="w-full h-full " onContextMenu={handleContextMenu}>
+		<div className="w-full h-full ">
 			<DataGrid
 				rows={users}
 				columns={columns}
@@ -145,16 +113,6 @@ export default function UsersTable() {
 				pageSizeOptions={[10]}
 				rowCount={usersCount}
 				loading={loading}
-				slotProps={{
-					row: {
-						onContextMenu: (e) => handleContextMenu(e),
-					},
-				}}
-			/>
-			<ContextMenu
-				anchorPosition={contextMenuPosition}
-				onClose={handleContextMenuClose}
-				onMenuItemClick={handleMenuItemClick}
 			/>
 		</div>
 	);
