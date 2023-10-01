@@ -1,10 +1,13 @@
 "use client";
 
-import { Autocomplete, TextField, FormControl } from "@mui/material";
+import { TextField, FormControl } from "@mui/material";
 import { useState } from "react";
 import DepartmentAutoComplete from "./formComponents/DepartmentAutoComplete";
 import ManagerAutoComplete from "./formComponents/ManagerAutoComplete";
 import PositionAutoComplete from "./formComponents/PositionAutoComplete";
+import toast from "react-hot-toast";
+import { exportWFRToCsv } from "helpers/admin/user";
+import { ClipLoader } from "react-spinners";
 
 export default function AddUserForm({ closeModal, openModal }) {
 	const [formData, setFormData] = useState({
@@ -15,8 +18,40 @@ export default function AddUserForm({ closeModal, openModal }) {
 		position: "",
 	});
 
-	const handleFormSubmission = (e) => {
+	const [loading, setLoading] = useState(false);
+
+	const handleFormSubmission = async (e) => {
 		e.preventDefault();
+
+		if (Object.values(formData).some((value) => value === "")) {
+			toast.error("Missing User Info!");
+			return;
+		}
+		setLoading(true);
+		// send api request to CREATE USER
+		await fetch("/api/admin/users/create", {
+			method: "POST",
+			body: JSON.stringify({
+				...formData,
+			}),
+		})
+			.then(async (res) => {
+				return await res.json();
+			})
+			.then((data) => {
+				if (data.error) {
+					throw new Error(data.error);
+				}
+				exportWFRToCsv(data);
+				toast.success("User Created");
+				closeModal();
+			})
+			.catch((error) => {
+				toast.error(error.message);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
 	};
 
 	const handleFieldChange = (field) => {
@@ -77,10 +112,11 @@ export default function AddUserForm({ closeModal, openModal }) {
 
 			<div className="flex flex-row gap-3 items-center self-center">
 				<button
+					disabled={loading}
 					type="submit"
 					className="py-2 px-3 rounded-lg bg-green-400 text-white font-semibold text-xl"
 				>
-					Submit
+					{loading ? <ClipLoader size={25} color="#FFF" /> : "Submit"}
 				</button>
 				<button
 					type="reset"

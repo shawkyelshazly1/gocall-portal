@@ -48,7 +48,7 @@ export default function PositionAutoComplete({ handleFieldChange }) {
 			options={positions}
 			className="w-full"
 			onChange={(e, value) => {
-				handleFieldChange({ name: "position", value: value || "" });
+				handleFieldChange({ name: "position", value: value.id || "" });
 			}}
 			sx={{ width: 300 }}
 			renderInput={(params) => {

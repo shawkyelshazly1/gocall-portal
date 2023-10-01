@@ -1,7 +1,7 @@
 "use client";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { ClipLoader } from "react-spinners";
@@ -32,8 +32,6 @@ export default function LoginForm() {
 			toast.success("Logged In.");
 			router.push(callbackUrl);
 		}
-
-		
 	};
 
 	return (
