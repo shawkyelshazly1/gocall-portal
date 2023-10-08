@@ -2,14 +2,16 @@ import { loadPositions } from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-export async function GET(req) {
+export async function GET(req, { params }) {
 	const token = await getToken({ req });
 
-	if (token.user.position !== "it") {
+	if (token.user.department.name !== "information_technology") {
 		return new Response("Not Authorized", { status: 401 });
 	}
 
-	let positions = await loadPositions();
+	let id = params.id;
+
+	let positions = await loadPositions(parseInt(id));
 
 	if (positions) {
 		return NextResponse.json(positions);

@@ -10,7 +10,7 @@ export async function GET(req, { params }) {
 	const token = await getToken({ req });
 	let id = params.id;
 
-	if (token.user.position !== "it") {
+	if (token.user.department.name !== "information_technology") {
 		return new Response("Not Authorized", { status: 401 });
 	}
 

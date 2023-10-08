@@ -12,13 +12,15 @@ datasource db {
 }
 
 model Department {
-  id             Int          @id @default(autoincrement())
-  name           String
-  description    String?
-  parentDept     Department?  @relation("SubDepartments", fields: [parentId], references: [id])
-  parentId       Int?
-  subDepartments Department[] @relation("SubDepartments")
-  employees      Employee[]   @relation("DepartmentEmployees")
+  id               Int          @id @default(autoincrement())
+  name             String
+  description      String?
+  parentDept       Department?  @relation("SubDepartments", fields: [parentId], references: [id])
+  parentId         Int?
+  subDepartments   Department[] @relation("SubDepartments")
+  employees        Employee[]   @relation("DepartmentEmployees")
+  positions        Position[]   @relation("DepartmentPositions")
+  projectEmployees Employee[]   @relation("SubDepartmentEmployees")
 }
 
 model LoginDetails {
@@ -34,9 +36,13 @@ model Employee {
   email            String            @unique
   firstName        String
   lastName         String
-  position         Position          @default(representative)
+  hiringDate       DateTime          @default(now())
   department       Department        @relation("DepartmentEmployees", fields: [departmentId], references: [id])
   departmentId     Int
+  project          Department?       @relation("SubDepartmentEmployees", fields: [projectId], references: [id])
+  projectId        Int?
+  positionId       Int?
+  position         Position?         @relation(fields: [positionId], references: [id])
   manager          Employee?         @relation("ManagerEmployees", fields: [managerId], references: [id])
   managerId        Int?
   subordinates     Employee[]        @relation("ManagerEmployees")
@@ -46,18 +52,13 @@ model Employee {
   LoginDetails     LoginDetails?
 }
 
-enum Position {
-  representative
-  team_lead
-  supervisor
-  quality_analyst
-  trainer
-  hr
-  rtm
-  it
-  operations_manager
-  ceo
-  general_manager
+model Position {
+  id           Int        @id @default(autoincrement())
+  title        String
+  department   Department @relation("DepartmentPositions", fields: [departmentId], references: [id])
+  departmentId Int
+  level        Int
+  employees    Employee[]
 }
 
 model VacationRequest {

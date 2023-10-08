@@ -16,7 +16,7 @@ export default withAuth(
 		// protect admin pages
 		if (
 			req.nextUrl.pathname.startsWith("/admin") &&
-			token.user.position !== "it"
+			token.user.department.name !== "information_technology"
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}

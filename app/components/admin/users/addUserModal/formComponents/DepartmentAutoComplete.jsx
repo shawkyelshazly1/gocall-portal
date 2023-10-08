@@ -99,7 +99,7 @@ export default function DepartmentAutoComplete({ handleFieldChange }) {
 					options={subDepartments}
 					className="w-full"
 					onChange={(e, value) => {
-						handleFieldChange({ name: "departmentId", value: value?.id || "" });
+						handleFieldChange({ name: "projectId", value: value?.id || "" });
 						setSelectedSubDepartment(value);
 					}}
 					sx={{ width: 300 }}

@@ -1,5 +1,4 @@
 import prisma from "../../../prisma";
-import { Position } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import passwordGenerator from "generate-password";
 import exportFromJSON from "export-from-json";
@@ -124,7 +123,7 @@ export const loadSubDepartment = async (deptId) => {
 };
 
 // load Departments
-export const loadDepartmentPeople = async (departmentId) => {
+export const loadDepartmentPeople = async (departmentId, positionId) => {
 	try {
 		let people = await prisma.employee.findMany({
 			where: {
@@ -134,10 +133,38 @@ export const loadDepartmentPeople = async (departmentId) => {
 				firstName: true,
 				lastName: true,
 				id: true,
+				position: {
+					select: {
+						level: true,
+					},
+				},
 			},
 		});
 
-		return people;
+		let currentPosition = await prisma.position.findUnique({
+			where: { id: positionId },
+			select: {
+				level: true,
+			},
+		});
+
+		people = people.filter(
+			(employee) =>
+				parseInt(employee.position.level) < parseInt(currentPosition.level) //lower means higher ranking 1 < 2
+		);
+
+		let general_managers = await prisma.employee.findMany({
+			where: {
+				department: {
+					name: "general_management",
+				},
+			},
+			include: {
+				department: true,
+			},
+		});
+
+		return [...people, ...general_managers];
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -146,9 +173,18 @@ export const loadDepartmentPeople = async (departmentId) => {
 };
 
 // load positions
-export const loadPositions = async () => {
+export const loadPositions = async (departmentId) => {
 	try {
-		return Position;
+		let positions = await prisma.position.findMany({
+			where: { departmentId: departmentId },
+			select: {
+				title: true,
+				id: true,
+				level: true,
+			},
+		});
+
+		return positions;
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -158,6 +194,7 @@ export const loadPositions = async () => {
 
 // create new user
 export const createUser = async (userDetails) => {
+	console.log(userDetails);
 	try {
 		let newEmployee = await prisma.employee.create({
 			data: { ...userDetails },
@@ -211,8 +248,8 @@ export const createUser = async (userDetails) => {
 
 		return employeeInfo;
 	} catch (error) {
-		return { error: "Email exists already!" };
 		console.error(error);
+		return { error: "Email exists already!" };
 	} finally {
 		await prisma.$disconnect();
 	}
@@ -254,7 +291,7 @@ export const exportWFRToCsv = (data) => {
 			firstName: S(request.firstName).capitalize().value(),
 			lastName: S(request.lastName).capitalize().value(),
 			email: request.email,
-			position: request.position
+			position: request.position.title
 				.split("_")
 				.map((value) => S(value).capitalize().value())
 				.join(" "),

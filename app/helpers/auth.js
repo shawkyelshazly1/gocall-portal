@@ -21,6 +21,7 @@ export const loginUser = async (username, password) => {
 			include: {
 				manager: true,
 				department: true,
+				position: true,
 			},
 		});
 

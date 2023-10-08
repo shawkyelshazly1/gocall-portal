@@ -14,7 +14,9 @@ const columns = [
 		headerName: "Position",
 		width: 200,
 		valueGetter: (params) =>
-			`${S(params.row.position.split("_").join(" ")).capitalize().value()}`,
+			`${S(params.row.position.title.split("_").join(" "))
+				.capitalize()
+				.value()}`,
 	},
 
 	{

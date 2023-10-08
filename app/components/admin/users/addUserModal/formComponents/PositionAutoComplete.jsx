@@ -3,26 +3,29 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import S from "underscore.string";
 
-export default function PositionAutoComplete({ handleFieldChange }) {
+export default function PositionAutoComplete({
+	handleFieldChange,
+	departmentId,
+}) {
 	const [positions, setPositions] = useState([]);
 
 	// load positions
 	useEffect(() => {
 		async function loadPositions() {
-			await fetch(`/api/admin/users/positions`, {
+			await fetch(`/api/admin/users/positions/${departmentId}`, {
 				method: "GET",
 			})
 				.then(async (res) => {
 					return await res.json();
 				})
 				.then((data) => {
-					data = Object.keys(data).map((item) => {
+					data = data.map((item) => {
 						return {
-							label: item
+							label: item.title
 								.split("_")
 								.map((value) => S(value).capitalize().value())
 								.join(" "),
-							id: item,
+							id: item.id,
 						};
 					});
 					setPositions(data);
@@ -34,21 +37,23 @@ export default function PositionAutoComplete({ handleFieldChange }) {
 		}
 
 		// calling functions
-		loadPositions();
+		departmentId !== null ? loadPositions() : "";
 
 		return () => {
 			setPositions([]);
 		};
-	}, []);
+	}, [departmentId]);
 
-	return (
+	return departmentId === null || null ? (
+		<></>
+	) : (
 		<Autocomplete
-			id="position"
-			name="position"
+			id="positionId"
+			name="positionId"
 			options={positions}
 			className="w-full"
 			onChange={(e, value) => {
-				handleFieldChange({ name: "position", value: value.id || "" });
+				handleFieldChange({ name: "positionId", value: value.id || "" });
 			}}
 			sx={{ width: 300 }}
 			renderInput={(params) => {

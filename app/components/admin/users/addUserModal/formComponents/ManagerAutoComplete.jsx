@@ -6,15 +6,19 @@ import S from "underscore.string";
 export default function ManagerAutoComplete({
 	handleFieldChange,
 	departmentId,
+	positionId,
 }) {
 	const [managers, setManagers] = useState([]);
 
 	// load managers
 	useEffect(() => {
 		async function loadManagers() {
-			await fetch(`/api/admin/users/departments/people/${departmentId}`, {
-				method: "GET",
-			})
+			await fetch(
+				`/api/admin/users/departments/people?departmentId=${departmentId}&positionId=${positionId}`,
+				{
+					method: "GET",
+				}
+			)
 				.then(async (res) => {
 					return await res.json();
 				})
@@ -38,14 +42,15 @@ export default function ManagerAutoComplete({
 		}
 
 		// calling functions
-		loadManagers();
+		// calling functions
+		departmentId !== null && positionId !== null ? loadManagers() : "";
 
 		return () => {
 			setManagers([]);
 		};
-	}, [departmentId]);
+	}, [departmentId, positionId]);
 
-	return departmentId === "" || null ? (
+	return departmentId === null || null ? (
 		<></>
 	) : (
 		<Autocomplete

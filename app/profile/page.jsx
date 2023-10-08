@@ -46,7 +46,7 @@ export default async function Page() {
 					<DetailsCard title={"Phone Number"} value={"+201110276945"} />
 					<DetailsCard
 						title={"Position"}
-						value={user.position
+						value={user.position.title
 							.split("_")
 							.map((word) => S(word).capitalize().value())
 							.join(" ")}
@@ -67,10 +67,16 @@ export default async function Page() {
 			</div>
 			<div className="flex flex-col">
 				<div className="flex flex-col gap-4">
-					<h1 className="font-medium text-xl text-slate-400">Team</h1>
-					{subordinates?.map((subordinate) => (
-						<EmployeeCard employee={subordinate} key={subordinate.id} />
-					))}
+					{subordinates.length > 0 ? (
+						<>
+							<h1 className="font-medium text-xl text-slate-400">Team</h1>
+							{subordinates?.map((subordinate) => (
+								<EmployeeCard employee={subordinate} key={subordinate.id} />
+							))}
+						</>
+					) : (
+						<></>
+					)}
 				</div>
 			</div>
 		</div>

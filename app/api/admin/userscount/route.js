@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function GET(req) {
 	const token = await getToken({ req });
 
-	if (token.user.position !== "it") {
+	if (token.user.department.name !== "information_technology") {
 		return new Response("Not Authorized", { status: 401 });
 	}
 

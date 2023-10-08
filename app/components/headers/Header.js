@@ -89,7 +89,7 @@ export default function Header() {
 								display: { xs: "block", md: "none" },
 							}}
 						>
-							{data?.user?.position === "it"
+							{data?.user?.department.name === "information_technology"
 								? adminPages.map((page) => (
 										<Link
 											href={page === "home" ? "/" : `/admin/${page}`}
@@ -129,7 +129,7 @@ export default function Header() {
 							display: { xs: "none", md: "flex", marginLeft: "50px" },
 						}}
 					>
-						{data?.user?.position === "it"
+						{data?.user?.department.name === "information_technology"
 							? adminPages.map((page) => (
 									<Link
 										href={page === "home" ? "/" : `/admin/${page}`}

@@ -11,11 +11,12 @@ import { ClipLoader } from "react-spinners";
 
 export default function AddUserForm({ closeModal, openModal }) {
 	const [formData, setFormData] = useState({
-		firstName: "",
-		lastName: "",
-		email: "",
-		departmentId: "",
-		position: "",
+		firstName: null,
+		lastName: null,
+		email: null,
+		departmentId: null,
+		positionId: null,
+		projectId: null,
 	});
 
 	const [loading, setLoading] = useState(false);
@@ -23,7 +24,11 @@ export default function AddUserForm({ closeModal, openModal }) {
 	const handleFormSubmission = async (e) => {
 		e.preventDefault();
 
-		if (Object.values(formData).some((value) => value === "")) {
+		if (
+			Object.entries(formData).some(
+				(key, value) => value === null && key !== "projectId"
+			)
+		) {
 			toast.error("Missing User Info!");
 			return;
 		}
@@ -103,11 +108,15 @@ export default function AddUserForm({ closeModal, openModal }) {
 			</FormControl>
 			<DepartmentAutoComplete handleFieldChange={handleFieldChange} />
 			<FormControl className="flex flex-col  lg:flex-row gap-2">
-				<ManagerAutoComplete
+				<PositionAutoComplete
 					handleFieldChange={handleFieldChange}
 					departmentId={formData.departmentId}
 				/>
-				<PositionAutoComplete handleFieldChange={handleFieldChange} />
+				<ManagerAutoComplete
+					handleFieldChange={handleFieldChange}
+					departmentId={formData.departmentId}
+					positionId={formData.positionId}
+				/>
 			</FormControl>
 
 			<div className="flex flex-row gap-3 items-center self-center">
