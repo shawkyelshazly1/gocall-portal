@@ -37,7 +37,9 @@ export default function PositionAutoComplete({
 		}
 
 		// calling functions
-		departmentId !== null ? loadPositions() : "";
+		if (departmentId) {
+			loadPositions();
+		}
 
 		return () => {
 			setPositions([]);
@@ -53,7 +55,7 @@ export default function PositionAutoComplete({
 			options={positions}
 			className="w-full"
 			onChange={(e, value) => {
-				handleFieldChange({ name: "positionId", value: value.id || "" });
+				handleFieldChange({ name: "positionId", value: value?.id || "" });
 			}}
 			sx={{ width: 300 }}
 			renderInput={(params) => {

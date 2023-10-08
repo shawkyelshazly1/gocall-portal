@@ -44,14 +44,19 @@ export default async function Page() {
 					<DetailsCard title={"First Name"} value={user.firstName} />
 					<DetailsCard title={"Last Name"} value={user.lastName} />
 					<DetailsCard title={"Email Address"} value={user.email} />
-					<DetailsCard
-						title={"Manager"}
-						value={
-							S(user.manager.firstName).capitalize().value() +
-							" " +
-							S(user.manager.lastName).capitalize().value()
-						}
-					/>
+					{user.manager ? (
+						<DetailsCard
+							title={"Manager"}
+							value={
+								S(user.manager.firstName).capitalize().value() +
+								" " +
+								S(user.manager.lastName).capitalize().value()
+							}
+						/>
+					) : (
+						<></>
+					)}
+
 					<DetailsCard
 						title={"Position"}
 						value={user.position.title

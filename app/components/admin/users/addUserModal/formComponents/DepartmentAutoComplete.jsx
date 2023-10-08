@@ -77,8 +77,8 @@ export default function DepartmentAutoComplete({ handleFieldChange }) {
 	return (
 		<FormControl className="flex flex-col  lg:flex-row gap-2">
 			<Autocomplete
-				name="department"
-				id="department"
+				name="departmentId"
+				id="departmentId"
 				className="w-full"
 				options={departments}
 				onChange={(e, value) => {

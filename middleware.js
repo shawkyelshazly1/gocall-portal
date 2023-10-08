@@ -20,6 +20,14 @@ export default withAuth(
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
+
+		// protect admin pages
+		if (
+			req.nextUrl.pathname.startsWith("/vacation") &&
+			token.user.position.title === "representative"
+		) {
+			return NextResponse.redirect(new URL("/", req.url));
+		}
 	},
 	{
 		pages: {

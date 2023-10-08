@@ -55,6 +55,22 @@ export const authOptions = {
 		},
 		async session({ session, token }) {
 			session.user = token.user;
+
+			// refetch user if logged In to update session
+			if (token?.user?.id) {
+				let updatedUser = await prisma.employee.findUnique({
+					where: { id: token?.user.id },
+					include: {
+						manager: true,
+						department: true,
+						position: true,
+					},
+				});
+
+				session.user = updatedUser;
+				token.user = updatedUser;
+			}
+
 			return session;
 		},
 		async redirect({ url, baseUrl }) {

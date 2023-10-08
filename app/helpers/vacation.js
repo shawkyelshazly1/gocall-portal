@@ -38,8 +38,19 @@ export const submitVacationRequest = async (vacationData, userId) => {
 			data: {
 				...vacationData,
 				employeeId: userId,
+				approvalStatus:
+					vacationData.reason === "casual" ? "approved" : "pending",
 			},
 		});
+
+		// update user balance
+		if (["casual"].includes(vacationData.reason)) {
+			let result = await updateEmployeeVacationBalance(userId);
+
+			if (!result) {
+				throw new Error("Something went wrong!");
+			}
+		}
 
 		return vacationRequest;
 	} catch (error) {
@@ -213,6 +224,7 @@ export const updateRequestStatus = async (data, managerId) => {
 				employee: {
 					select: {
 						managerId: true,
+						id: true,
 					},
 				},
 			},
@@ -236,11 +248,45 @@ export const updateRequestStatus = async (data, managerId) => {
 			return null;
 		}
 
+		// update employee Balance
+		let result = await updateEmployeeVacationBalance(request.employee.id);
+
+		if (!result) {
+			throw new Error("Something went wrong!");
+		}
+
 		return updatedRequest;
 	} catch (error) {
 		console.error(error);
 	} finally {
 		await prisma.$disconnect();
+	}
+};
+
+// update employee Balance count by -1
+const updateEmployeeVacationBalance = async (employeeId) => {
+	let employee = await prisma.employee.findUnique({
+		where: { id: parseInt(employeeId) },
+		select: { vacationBalance: true },
+	});
+
+	if (!employee) {
+		throw new Error("Something went wrong!");
+	}
+
+	let updatedVacationBalance = employee.vacationBalance - 1;
+
+	let updatedEmployee = await prisma.employee.update({
+		where: { id: parseInt(employeeId) },
+		data: {
+			vacationBalance: updatedVacationBalance,
+		},
+	});
+
+	if (updatedEmployee) {
+		return true;
+	} else {
+		return false;
 	}
 };
 

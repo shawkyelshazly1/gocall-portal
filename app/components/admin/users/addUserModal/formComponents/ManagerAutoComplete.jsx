@@ -43,14 +43,16 @@ export default function ManagerAutoComplete({
 
 		// calling functions
 		// calling functions
-		departmentId !== null && positionId !== null ? loadManagers() : "";
+		if (departmentId && positionId) {
+			loadManagers();
+		}
 
 		return () => {
 			setManagers([]);
 		};
 	}, [departmentId, positionId]);
 
-	return departmentId === null || null ? (
+	return departmentId === null || "" ? (
 		<></>
 	) : (
 		<Autocomplete

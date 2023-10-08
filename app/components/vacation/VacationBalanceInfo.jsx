@@ -43,9 +43,9 @@ export default async function VacationBalanceInfo() {
 										? usedBalance.length === 0
 											? 6
 											: 6 -
-											  usedBalance?.filter(
-													(item) => item.vacationType === "casual"
-											  )[0].days
+													usedBalance?.filter(
+														(item) => item.vacationType === "casual"
+													)[0]?.days || 6 - 0
 										: "_"}
 								</>
 							)}
