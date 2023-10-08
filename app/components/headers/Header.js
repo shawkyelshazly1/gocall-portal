@@ -21,7 +21,7 @@ import Link from "next/link";
 import logoPic from "@/public/logo.png";
 import AdminMenu from "./AdminMenu";
 
-const pages = ["home"];
+const pages = ["home", "vacation"];
 const settings = ["profile", "reset_password", "Logout"];
 
 export default function Header() {
