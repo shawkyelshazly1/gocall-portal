@@ -1,9 +1,12 @@
+import { authOptions } from "@/api/auth/[...nextauth]/route";
 import AddUserModal from "@/components/admin/users/addUserModal/AddUserModal";
 import UsersTable from "@/components/admin/users/UsersTable";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 import React, { Suspense } from "react";
 import { ClipLoader } from "react-spinners";
 
-export default function Page() {
+export default async function Page() {
 	return (
 		<div className="w-full  flex container gap-4">
 			<div className="flex flex-col h-full w-full py-4 gap-4">

@@ -8,7 +8,7 @@ export const authOptions = {
 	pages: {
 		signIn: "/login",
 	},
-	secret: process.env.NEXTAUTH_SECRET,
+
 	adaptr: PrismaAdapter(prisma),
 	providers: [
 		CredentialsProvider({
@@ -39,7 +39,13 @@ export const authOptions = {
 			},
 		}),
 	],
-
+	session: {
+		strategy: "jwt",
+		jwt: {
+			maxAge: 86400,
+		},
+	},
+	secret: process.env.NEXTAUTH_SECRET,
 	callbacks: {
 		async jwt({ token, user }) {
 			if (user && !user.error) {
