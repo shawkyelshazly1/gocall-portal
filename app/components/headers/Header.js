@@ -19,9 +19,9 @@ import S from "underscore.string";
 import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 import logoPic from "@/public/logo.png";
+import AdminMenu from "./AdminMenu";
 
 const pages = ["home"];
-const adminPages = ["home", "users", "departments"];
 const settings = ["profile", "reset_password", "Logout"];
 
 export default function Header() {
@@ -89,28 +89,16 @@ export default function Header() {
 								display: { xs: "block", md: "none" },
 							}}
 						>
-							{data?.user?.department.name === "information_technology"
-								? adminPages.map((page) => (
-										<Link
-											href={page === "home" ? "/" : `/admin/${page}`}
-											key={page}
-										>
-											<MenuItem>
-												<Typography color="#000" textAlign="center">
-													{page}
-												</Typography>
-											</MenuItem>
-										</Link>
-								  ))
-								: pages.map((page) => (
-										<Link href={page === "home" ? "/" : `/${page}`} key={page}>
-											<MenuItem>
-												<Typography color="#000" textAlign="center">
-													{page}
-												</Typography>
-											</MenuItem>
-										</Link>
-								  ))}
+							{pages.map((page) => (
+								<Link href={page === "home" ? "/" : `/${page}`} key={page}>
+									<MenuItem>
+										<Typography color="#000" textAlign="center">
+											{page}
+										</Typography>
+									</MenuItem>
+								</Link>
+							))}
+							<AdminMenu />
 						</Menu>
 					</Box>
 
@@ -129,36 +117,21 @@ export default function Header() {
 							display: { xs: "none", md: "flex", marginLeft: "50px" },
 						}}
 					>
-						{data?.user?.department.name === "information_technology"
-							? adminPages.map((page) => (
-									<Link
-										href={page === "home" ? "/" : `/admin/${page}`}
-										key={page}
-									>
-										<Button
-											sx={{
-												my: 2,
-												display: "block",
-												fontWeight: "700",
-											}}
-										>
-											{page}
-										</Button>
-									</Link>
-							  ))
-							: pages.map((page) => (
-									<Link href={page === "home" ? "/" : `/${page}`} key={page}>
-										<Button
-											sx={{
-												my: 2,
-												display: "block",
-												fontWeight: "700",
-											}}
-										>
-											{page}
-										</Button>
-									</Link>
-							  ))}
+						{pages.map((page) => (
+							<Link href={page === "home" ? "/" : `/${page}`} key={page}>
+								<Button
+									sx={{
+										my: 2,
+										display: "block",
+										fontWeight: "700",
+									}}
+								>
+									{page}
+								</Button>
+							</Link>
+						))}
+
+						<AdminMenu />
 					</Box>
 
 					<Box

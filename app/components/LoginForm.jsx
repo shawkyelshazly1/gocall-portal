@@ -18,7 +18,10 @@ export default function LoginForm() {
 
 		let formData = Object.fromEntries(new FormData(e.target).entries());
 
-		formData = { ...formData, username: formData.username.toLowerCase() };
+		formData = {
+			...formData,
+			username: formData.username.toLowerCase().trim(),
+		};
 		setLoading(true);
 		let result = await signIn("credentials", {
 			...formData,
