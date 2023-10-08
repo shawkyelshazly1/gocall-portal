@@ -1,8 +1,15 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { loginUser } from "@/helpers/auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "@/prisma/index";
 
 export const authOptions = {
+	pages: {
+		signIn: "/login",
+	},
+	secret: process.env.NEXTAUTH_SECRET,
+	adaptr: PrismaAdapter(prisma),
 	providers: [
 		CredentialsProvider({
 			name: "credentials",
@@ -32,10 +39,7 @@ export const authOptions = {
 			},
 		}),
 	],
-	secret: process.env.NEXTAUTH_SECRET,
-	pages: {
-		signIn: "/login",
-	},
+
 	callbacks: {
 		async jwt({ token, user }) {
 			if (user && !user.error) {
@@ -44,7 +48,6 @@ export const authOptions = {
 			return token;
 		},
 		async session({ session, token }) {
-			
 			session.user = token.user;
 			return session;
 		},
