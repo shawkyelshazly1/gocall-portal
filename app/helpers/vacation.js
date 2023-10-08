@@ -2,6 +2,35 @@ import exportFromJSON from "export-from-json";
 import prisma from "../../prisma";
 import moment from "moment";
 
+// load user vacation balance
+export const loadUserVacationBalance = async (userId, vacationBalance) => {
+	let currentYear = new Date().getFullYear();
+	try {
+		let usedBalance = await prisma.vacationRequest.groupBy({
+			by: ["reason"],
+			_count: {
+				approvalStatus: true,
+			},
+			where: {
+				employeeId: parseInt(userId),
+				approvalStatus: "approved",
+				from: { gte: new Date(currentYear, 0, 1) },
+				to: { lte: new Date(currentYear, 11, 31) },
+			},
+		});
+
+		usedBalance = usedBalance.map((item) => {
+			return { vacationType: item.reason, days: item._count.approvalStatus };
+		});
+
+		return usedBalance;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
 // submit vacation request
 export const submitVacationRequest = async (vacationData) => {
 	try {
@@ -20,31 +49,55 @@ export const submitVacationRequest = async (vacationData) => {
 };
 
 // Load user vacation requests history
-export const loadVacationRequests = async (userId) => {
+export const loadVacationRequests = async (userId, skip, take) => {
 	try {
 		let vacationRequests = await prisma.vacationRequest.findMany({
-			where: { userId: userId },
-
+			where: { employeeId: userId },
 			select: {
+				id: true,
 				createdAt: true,
-				user: {
+				employee: {
 					select: {
-						username: true,
+						id: true,
+						firstName: true,
+						lastName: true,
 					},
 				},
 				reason: true,
 				from: true,
 				to: true,
 				approvalStatus: true,
-				approvedByUser: {
+				approvedByManager: {
 					select: {
-						username: true,
+						id: true,
+						firstName: true,
+						lastName: true,
 					},
 				},
 			},
+			orderBy: {
+				createdAt: "desc",
+			},
+			skip,
+			take,
 		});
 
 		return vacationRequests;
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// Load user vacation requests history
+export const loadVacationRequestsCount = async (userId) => {
+	try {
+		let vacationRequestsCount = await prisma.vacationRequest.count({
+			where: { employeeId: userId },
+		});
+
+		return vacationRequestsCount;
 	} catch (error) {
 		console.error(error);
 	} finally {
