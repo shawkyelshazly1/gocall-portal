@@ -194,7 +194,7 @@ export const loadPositions = async (departmentId) => {
 
 // create new user
 export const createUser = async (userDetails) => {
-	console.log(userDetails);
+	
 	try {
 		let newEmployee = await prisma.employee.create({
 			data: { ...userDetails },

@@ -6,52 +6,35 @@ import toast from "react-hot-toast";
 import S from "underscore.string";
 
 const columns = [
-	{ field: "id", headerName: "ID", width: 70 },
-	{ field: "firstName", headerName: "First Name", width: 130 },
-	{ field: "lastName", headerName: "Last Name", width: 130 },
+	{ field: "id", headerName: "ID", width: 100 },
 	{
-		field: "positionName",
-		headerName: "Position",
-		width: 200,
+		field: "name",
+		headerName: "Name",
+		width: 300,
 		valueGetter: (params) =>
-			`${S(params.row.position.title.split("_").join(" "))
-				.capitalize()
-				.value()}`,
+			`${params.row.name
+				.split("_")
+				.map((word) => S(word).capitalize().value())
+				.join(" ")}`,
 	},
 
 	{
-		field: "departmentName",
-		headerName: "Department",
-		width: 200,
+		field: "parentDept",
+		headerName: "ParentDepartment",
+		width: 300,
 		valueGetter: (params) =>
 			`${
-				S(params.row.department?.name.split("_").join(" "))
+				S(params.row.parentDept?.name.split("_").join(" "))
 					.capitalize()
 					.value() || ""
 			}`,
 	},
-
-	{
-		field: "managerName",
-		width: 200,
-		headerName: "Manager",
-		valueGetter: (params) =>
-			`${
-				S(params.row.manager?.firstName.split("_").join(" "))
-					.capitalize()
-					.value() || ""
-			} ${
-				S(params.row.manager?.lastName.split("_").join(" "))
-					.capitalize()
-					.value() || ""
-			}`,
-	},
-	{ field: "email", headerName: "Email", width: 250 },
+	{ field: "description", headerName: "Description", width: 400 },
 ];
 
-export default function UsersTable() {
-	const [users, setUsers] = useState([]);
-	const [usersCount, setUsersCount] = useState(0);
+export default function DepartmentsTable() {
+	const [departments, setDepartments] = useState([]);
+	const [departmentsCount, setDepartmentsCount] = useState(0);
 	const [paginationModel, setPaginationModel] = useState({
 		page: 0,
 		pageSize: 10,
@@ -59,29 +42,29 @@ export default function UsersTable() {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
-		async function loadUsersCount() {
-			await fetch(`/api/admin/userscount`, { method: "GET" })
+		async function loadDepartmentsCount() {
+			await fetch(`/api/admin/departments/departmentsCount`, { method: "GET" })
 				.then(async (res) => {
 					return await res.json();
 				})
 				.then((data) => {
-					setUsersCount(data);
+					setDepartmentsCount(data);
 				})
 				.catch((error) => toast.error("Something went wrong!"));
 		}
 
 		// calling functions
-		loadUsersCount();
+		loadDepartmentsCount();
 		return () => {
-			setUsersCount(0);
+			setDepartmentsCount(0);
 		};
 	}, []);
 
 	useEffect(() => {
-		async function getUsers() {
+		async function getDepartments() {
 			setLoading(true);
 			await fetch(
-				`/api/admin/users?skip=${
+				`/api/admin/departments?skip=${
 					paginationModel.page * paginationModel.pageSize
 				}&take=${paginationModel.pageSize}`,
 				{ method: "GET" }
@@ -90,7 +73,7 @@ export default function UsersTable() {
 					return await res.json();
 				})
 				.then((data) => {
-					setUsers(data);
+					setDepartments(data);
 				})
 				.catch((error) => toast.error("Something went wrong!"))
 				.finally(() => {
@@ -99,20 +82,20 @@ export default function UsersTable() {
 		}
 
 		// calling functions
-		getUsers();
+		getDepartments();
 	}, [paginationModel.page]);
 
 	return (
 		<div className="w-full h-fit ">
 			<DataGrid
-				rows={users}
+				rows={departments}
 				columns={columns}
 				paginationModel={paginationModel}
 				pagination
 				paginationMode="server"
 				onPaginationModelChange={setPaginationModel}
 				pageSizeOptions={[10]}
-				rowCount={usersCount}
+				rowCount={departmentsCount}
 				loading={loading}
 			/>
 		</div>
