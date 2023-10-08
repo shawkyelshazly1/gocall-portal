@@ -4,10 +4,11 @@ import { getServerSession } from "next-auth";
 import Image from "next/image";
 import React from "react";
 import S from "underscore.string";
-import prisma from "../../prisma";
+import prisma from "../../../prisma";
 import EmployeeCard from "@/components/profile/Employee Card";
 export default async function Page() {
 	const { user } = await getServerSession(authOptions);
+	console.log(user);
 
 	let subordinates = await prisma.employee.findUnique({
 		where: { id: user.id },
@@ -43,7 +44,14 @@ export default async function Page() {
 					<DetailsCard title={"First Name"} value={user.firstName} />
 					<DetailsCard title={"Last Name"} value={user.lastName} />
 					<DetailsCard title={"Email Address"} value={user.email} />
-					<DetailsCard title={"Phone Number"} value={"+201110276945"} />
+					<DetailsCard
+						title={"Manager"}
+						value={
+							S(user.manager.firstName).capitalize().value() +
+							" " +
+							S(user.manager.lastName).capitalize().value()
+						}
+					/>
 					<DetailsCard
 						title={"Position"}
 						value={user.position.title
@@ -53,7 +61,7 @@ export default async function Page() {
 					/>
 				</div>
 			</div>
-			<div className="flex flex-col ">
+			<div className="flex flex-col gap-6">
 				<div className="flex flex-col gap-4">
 					<h1 className="font-medium text-xl text-slate-400">Department</h1>
 					<DetailsCard

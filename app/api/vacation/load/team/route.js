@@ -1,5 +1,4 @@
-import { getUsersCount } from "@/helpers/admin/user";
-import { loadVacationRequestsCount } from "@/helpers/vacation";
+import { loadTeamVacationRequests } from "@/helpers/vacation";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
@@ -9,10 +8,14 @@ export async function GET(req) {
 		return new Response("Not Authorized", { status: 401 });
 	}
 
-	let requestsCount = await loadVacationRequestsCount(token?.user.id);
-	requestsCount = { count: requestsCount };
-	if (requestsCount) {
-		return NextResponse.json(requestsCount);
+	let requests = await loadTeamVacationRequests(
+		parseInt(token?.user.id),
+		parseInt(req.nextUrl.searchParams.get(["skip"])),
+		parseInt(req.nextUrl.searchParams.get(["take"]))
+	);
+
+	if (requests) {
+		return NextResponse.json(requests);
 	} else {
 		return new Response("Something went wrong!", { status: 422 });
 	}

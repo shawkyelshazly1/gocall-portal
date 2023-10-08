@@ -1,4 +1,4 @@
-import { submitVacationRequest } from "@/helpers/vacation";
+import { updateRequestStatus } from "@/helpers/vacation";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
@@ -10,10 +10,10 @@ export async function POST(req) {
 
 	let body = await req.json();
 
-	let newRequest = await submitVacationRequest(body, token?.user.id);
+	let updatedRequest = await updateRequestStatus(body, token?.user.id);
 
-	if (newRequest) {
-		return NextResponse.json(newRequest);
+	if (updatedRequest) {
+		return NextResponse.json(updatedRequest);
 	} else {
 		return new Response("Something went wrong!", { status: 422 });
 	}

@@ -10,6 +10,8 @@ import Select from "@mui/material/Select";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useSession } from "next-auth/react";
+import S from "underscore.string";
+
 export default function VacationRequestForm({ closeModal }) {
 	const { data } = useSession();
 
@@ -23,6 +25,8 @@ export default function VacationRequestForm({ closeModal }) {
 
 	const handleFormSubmission = async (e) => {
 		e.preventDefault();
+
+		// validate data is present
 		if (Object.values(date).some((value) => value === "")) {
 			toast.error("Select dates!");
 			return;
@@ -31,16 +35,18 @@ export default function VacationRequestForm({ closeModal }) {
 			return;
 		}
 
+		// validate dates
+		if (moment(date.to).diff(moment(date.from), "days") < 0) {
+			toast.error("Please check dates!");
+			return;
+		}
+
 		// send api request to submit the request
 		await fetch("/api/vacation/submit", {
 			method: "POST",
 			body: JSON.stringify({
-				reason:
-					vacationReason === "business trip"
-						? vacationReason.split(" ").join("_")
-						: vacationReason,
+				reason: vacationReason,
 				...date,
-				userId: data?.user.id,
 			}),
 		})
 			.then(async (res) => {
@@ -53,7 +59,7 @@ export default function VacationRequestForm({ closeModal }) {
 			.catch((error) => toast.error("Something went wrong!"));
 	};
 
-	const vacationTypes = ["Annual", "Casual", "Sick", "Business Trip"];
+	const vacationTypes = ["annual", "casual", "sick", "business_trip"];
 
 	return (
 		<form
@@ -72,7 +78,10 @@ export default function VacationRequestForm({ closeModal }) {
 					>
 						{vacationTypes.map((vacationType, idx) => (
 							<MenuItem value={vacationType.toLowerCase()} key={idx}>
-								{vacationType}
+								{vacationType
+									.split("_")
+									.map((word) => S(word).capitalize().value())
+									.join(" ")}
 							</MenuItem>
 						))}
 					</Select>

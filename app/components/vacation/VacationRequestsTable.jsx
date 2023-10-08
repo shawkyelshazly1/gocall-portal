@@ -3,6 +3,7 @@
 import { DataGrid } from "@mui/x-data-grid";
 import moment from "moment";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import S from "underscore.string";
 
 // columns for the table
@@ -68,7 +69,7 @@ const columns = [
 		renderCell: (params) => {
 			return (
 				<span
-					className={`text-white text-base py-1 px-3 rounded-full font-semibold capitalize ${
+					className={`text-white text-center text-base py-1 px-3 rounded-full font-semibold capitalize w-24  ${
 						params.value === "pending"
 							? "bg-amber-500"
 							: params.value === "approved"
@@ -100,7 +101,7 @@ export default function VacationRequestsTable() {
 					return await res.json();
 				})
 				.then((data) => {
-					setRequestsCount(data);
+					setRequestsCount(data.count);
 				})
 				.catch((error) => toast.error("Something went wrong!"));
 		}
