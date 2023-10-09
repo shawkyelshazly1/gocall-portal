@@ -103,7 +103,7 @@ export default function UsersTable() {
 	}, [paginationModel.page]);
 
 	return (
-		<div className="w-full h-fit ">
+		<div className="w-full min-h-[200px] ">
 			<DataGrid
 				rows={users}
 				columns={columns}
