@@ -1,14 +1,14 @@
 import { FormControl, TextField } from "@mui/material";
 import { useState } from "react";
-import DepartmentAutoComplete from "./formComponenets/DepartmentAutoComplete";
 import { ClipLoader } from "react-spinners";
+import DepartmentAutoComplete from "./formComponenets/DepartmentAutoComplete";
 import toast from "react-hot-toast";
 
-export default function AddDepartmentForm({ closeModal, openModal }) {
+export default function AddPositionForm({ closeModal, openModal }) {
 	const [formData, setFormData] = useState({
-		name: null,
-		description: null,
-		parentId: null,
+		title: null,
+		departmentId: null,
+		level: null,
 	});
 
 	const [loading, setLoading] = useState(false);
@@ -20,18 +20,26 @@ export default function AddDepartmentForm({ closeModal, openModal }) {
 	const handleFormSubmission = async (e) => {
 		e.preventDefault();
 
-		if (formData.name === "") {
-			toast.error("Please enter department name!");
+		if (
+			Object.values(formData).some((value) => value === null || value === "")
+		) {
+			toast.error("Please enter valid position details.");
+			return;
+		}
+
+		if (formData.level <= 0) {
+			toast.error("Please enter a valid level!");
 			return;
 		}
 
 		setLoading(true);
 
-		await fetch(`/api/admin/departments/create`, {
+		await fetch(`/api/admin/positions/create`, {
 			method: "POST",
 			body: JSON.stringify({
 				...formData,
-				name: formData.name.trim(),
+				title: formData.title.trim(),
+				level: parseInt(formData.level),
 			}),
 		})
 			.then(async (res) => {
@@ -42,7 +50,7 @@ export default function AddDepartmentForm({ closeModal, openModal }) {
 					throw new Error(data.error);
 				}
 
-				toast.success("Department Created");
+				toast.success("Position Created.");
 				closeModal();
 			})
 			.catch((error) => {
@@ -61,11 +69,11 @@ export default function AddDepartmentForm({ closeModal, openModal }) {
 			<FormControl>
 				<TextField
 					required
-					id="name"
-					label="Name"
+					id="title"
+					label="Title"
 					variant="outlined"
 					className="w-full"
-					name="name"
+					name="title"
 					onChange={(e) => {
 						handleFieldChange({ name: e.target.name, value: e.target.value });
 					}}
@@ -73,13 +81,20 @@ export default function AddDepartmentForm({ closeModal, openModal }) {
 			</FormControl>
 			<FormControl>
 				<TextField
-					id="description"
-					label="Description"
-					multiline
-					className="w-full"
-					name="description"
-					rows={4}
+					required
+					id="level"
+					type="number"
+					label="Level"
 					variant="outlined"
+					className="w-full"
+					InputProps={{
+						inputProps: {
+							min: 1,
+							step: 1,
+						},
+					}}
+					name="level"
+					fullWidth
 					onChange={(e) => {
 						handleFieldChange({ name: e.target.name, value: e.target.value });
 					}}

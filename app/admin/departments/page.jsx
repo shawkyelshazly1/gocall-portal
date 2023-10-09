@@ -1,5 +1,5 @@
 import AddDepartmentModal from "@/components/admin/departments/addDepartmentModal/AddDepartmentModal";
-import DepartmentsTable from "@/components/admin/departments/addDepartmentModal/DepartmentsTable";
+import DepartmentsTable from "@/components/admin/departments/DepartmentsTable";
 import React, { Suspense } from "react";
 import { ClipLoader } from "react-spinners";
 
@@ -13,9 +13,9 @@ export default function Page() {
 					</h1>
 					<div className="flex flex-row gap-1 self-end">
 						<AddDepartmentModal />
-						<button className=" bg-secondary text-white py-2 px-4 rounded-xl font-semibold">
+						{/* <button className=" bg-secondary text-white py-2 px-4 rounded-xl font-semibold">
 							ADD BULK
-						</button>
+						</button> */}
 					</div>
 				</div>
 
