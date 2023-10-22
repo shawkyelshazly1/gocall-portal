@@ -1,3 +1,4 @@
+import AddBulkUsersModal from "@/components/admin/users/addBulkUsersModal/AddBulkUsersModal";
 import AddUserModal from "@/components/admin/users/addUserModal/AddUserModal";
 import UsersTable from "@/components/admin/users/UsersTable";
 
@@ -12,9 +13,7 @@ export default async function Page() {
 					<h1 className="text-2xl text-gray-400 font-semibold italic">USERS</h1>
 					<div className="flex flex-row gap-1 self-end">
 						<AddUserModal />
-						<button className=" bg-secondary text-white py-2 px-4 rounded-xl font-semibold">
-							ADD BULK
-						</button>
+						<AddBulkUsersModal />
 					</div>
 				</div>
 

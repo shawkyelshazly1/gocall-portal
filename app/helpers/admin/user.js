@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 import passwordGenerator from "generate-password";
 import exportFromJSON from "export-from-json";
 import S from "underscore.string";
+import { read, utils } from "xlsx";
 
 // load all users
 export const loadUsers = async (skip, take) => {
@@ -194,7 +195,6 @@ export const loadPositions = async (departmentId) => {
 
 // create new user
 export const createUser = async (userDetails) => {
-	
 	try {
 		let newEmployee = await prisma.employee.create({
 			data: { ...userDetails },
@@ -321,3 +321,69 @@ const ensureArray = (data) => {
 		return []; // Return an empty array for null or undefined
 	}
 };
+
+// download BulkFormat.xlsx
+export const downloadBulkFormatSheet = () => {
+	const fileUrl = "/BulkFormat.xlsx";
+
+	let link = document.createElement("a");
+	link.href = fileUrl;
+	link.download = "BulkFormat.xlsx";
+	link.click();
+};
+
+// validate bulk template columns
+export const validateBulkTemplate = (file) => {
+	const expectedColumns = [
+		"email",
+		"firstName",
+		"lastName",
+		"departmentId",
+		"managerId",
+		"positionId",
+		"projectId",
+		"middleName",
+		"nationalId",
+		"nationality",
+		"phoneNumber",
+	];
+
+	return new Promise((resolve) => {
+		if (!file) {
+			resolve(false);
+			return;
+		}
+
+		const reader = new FileReader();
+
+		reader.onload = (e) => {
+			let data = e.target.result;
+			const workbook = read(data, { type: "binary" });
+			const sheetName = workbook.SheetNames[0];
+			const sheet = workbook.Sheets[sheetName];
+			const dataRows = utils.sheet_to_json(sheet, { header: 1 });
+			const fileColumns = Object.values(dataRows[0] || {});
+			const validColumns = fileColumns.every((col) =>
+				expectedColumns.includes(col)
+			);
+			if (validColumns) {
+				const parsedData = dataRows.slice(1).map((row) => {
+					const obj = {};
+					fileColumns.forEach((column, index) => {
+						obj[column] = row[index];
+					});
+					return obj;
+				});
+				resolve(parsedData);
+			} else {
+				resolve(validColumns);
+			}
+		};
+
+		reader.readAsBinaryString(file);
+	});
+};
+
+// export const upsertBulkUsers = async (file) => {
+
+// };
