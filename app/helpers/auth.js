@@ -33,11 +33,13 @@ export const loginUser = async (username, password) => {
 		// return error if no employee found
 		if (!employee) {
 			return null;
+		} else if (employee.accountStatus === "disabled") {
+			return { error: "Account Disabled!" };
 		}
 
 		return employee;
 	} catch (error) {
-		return { error: error };
+		return { error };
 	} finally {
 		await prisma.$disconnect();
 	}

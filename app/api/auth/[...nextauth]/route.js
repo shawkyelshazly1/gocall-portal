@@ -31,6 +31,10 @@ export const authOptions = {
 					credentials.password
 				);
 
+				if (employee.error) {
+					throw new Error(employee.error);
+				}
+
 				if (employee) {
 					return Promise.resolve(employee);
 				} else {

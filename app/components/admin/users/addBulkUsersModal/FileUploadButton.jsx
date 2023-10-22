@@ -45,9 +45,7 @@ export default function FileUploadButton() {
 			.catch((error) => {
 				toast.error(error.message);
 			})
-			.finally(() => {
-				setLoading(false);
-			});
+			.finally(() => {});
 	};
 
 	const handleUpload = () => {

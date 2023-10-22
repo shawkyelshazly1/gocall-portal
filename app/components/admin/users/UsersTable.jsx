@@ -1,15 +1,18 @@
 "use client";
 
+import { Button, Stack } from "@mui/material";
 import {
 	DataGrid,
 	GridToolbarContainer,
 	GridToolbarExport,
-	GridToolbarFilterButton,
-	GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
+import { CgProfile } from "react-icons/cg";
+import { RiDeleteBin6Fill } from "react-icons/ri";
+import { FaUserEdit } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import S from "underscore.string";
+import ActionsMenu from "./addUserModal/ActionsMenu";
 
 const columns = [
 	{ field: "id", headerName: "ID", width: 70 },
@@ -29,6 +32,8 @@ const columns = [
 		field: "departmentName",
 		headerName: "Department",
 		width: 200,
+		align: "center",
+		headerAlign: "center",
 		valueGetter: (params) =>
 			`${
 				S(params.row.department?.name.split("_").join(" "))
@@ -53,6 +58,18 @@ const columns = [
 			}`,
 	},
 	{ field: "email", headerName: "Email", width: 250 },
+	{
+		field: "actions",
+		headerName: "Actions",
+		sortable: false,
+		disableExport: true,
+		align: "center",
+		headerAlign: "center",
+		flex: 1,
+		renderCell: (params) => {
+			return <ActionsMenu userId={params.row.id} />;
+		},
+	},
 ];
 
 function CustomToolbar() {
@@ -126,6 +143,7 @@ export default function UsersTable() {
 				columns={columns}
 				paginationModel={paginationModel}
 				pagination
+				rowSelection={false}
 				paginationMode="server"
 				onPaginationModelChange={setPaginationModel}
 				pageSizeOptions={[10]}

@@ -58,6 +58,7 @@ model Employee {
   approvedRequests VacationRequest[]  @relation("approvedByManager")
   LoginDetails     LoginDetails?
   documents        EmployeeDocuments?
+  accountStatus    String             @default("active")
 }
 
 model EmployeeDocuments {
