@@ -8,7 +8,7 @@ import prisma from "../../../prisma";
 import EmployeeCard from "@/components/profile/Employee Card";
 export default async function Page() {
 	const { user } = await getServerSession(authOptions);
-	console.log(user);
+	
 
 	let subordinates = await prisma.employee.findUnique({
 		where: { id: user.id },

@@ -8,6 +8,16 @@ export default withAuth(
 		const token = await getToken({ req });
 		const isAuthenticated = !!token;
 
+		// force reset password on first login
+		if (
+			isAuthenticated &&
+			token.user.LoginDetails.reset_required &&
+			!req.nextUrl.pathname.startsWith("/reset_password")
+		) {
+			if (!req.nextUrl.pathname.startsWith("/api"))
+				return NextResponse.redirect(new URL("/reset_password", req.url));
+		}
+
 		// login page and not authenticated
 		if (req.nextUrl.pathname.startsWith("/login") && isAuthenticated) {
 			return NextResponse.redirect(new URL("/", req.url));
@@ -16,7 +26,7 @@ export default withAuth(
 		// protect admin pages
 		if (
 			req.nextUrl.pathname.startsWith("/admin") &&
-			token.user.department.name !== "information_technology"
+			token.user?.department.name !== "information_technology"
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
@@ -24,7 +34,7 @@ export default withAuth(
 		// protect admin pages
 		if (
 			req.nextUrl.pathname.startsWith("/vacation") &&
-			token.user.position.title === "representative"
+			token.user?.position.title === "representative"
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}

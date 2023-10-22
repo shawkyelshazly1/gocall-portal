@@ -20,7 +20,7 @@ export default function AdminMenu() {
 
 	const [anchorElAdminMenu, setAnchorElAdminMenu] = React.useState(null);
 
-	return data?.user.department.name === "information_technology" ? (
+	return data?.user?.department.name === "information_technology" ? (
 		<Box sx={{ flexGrow: 0 }} className="flex flex-row items-center gap-4">
 			<Button
 				onClick={handleOpenAdminMenu}

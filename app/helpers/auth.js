@@ -22,6 +22,11 @@ export const loginUser = async (username, password) => {
 				manager: true,
 				department: true,
 				position: true,
+				LoginDetails: {
+					select: {
+						reset_required: true,
+					},
+				},
 			},
 		});
 

@@ -2,6 +2,7 @@ import prisma from "../../../prisma";
 import bcryptjs from "bcryptjs";
 
 export const resetUserPassword = async (data) => {
+	
 	try {
 		let existingUser = await prisma.loginDetails.findUnique({
 			where: {
@@ -27,6 +28,19 @@ export const resetUserPassword = async (data) => {
 		});
 
 		if (passwordChanged) {
+			let loginDetails = await prisma.loginDetails.update({
+				where: {
+					employeeId: data.userId,
+				},
+				data: {
+					reset_required: false,
+				},
+			});
+
+			if (!loginDetails) {
+				throw new Error("Something went wrong!");
+			}
+
 			return true;
 		} else {
 			throw new Error("Something went wrong!");

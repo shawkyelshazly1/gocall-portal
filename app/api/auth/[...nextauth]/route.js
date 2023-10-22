@@ -64,6 +64,11 @@ export const authOptions = {
 						manager: true,
 						department: true,
 						position: true,
+						LoginDetails: {
+							select: {
+								reset_required: true,
+							},
+						},
 					},
 				});
 

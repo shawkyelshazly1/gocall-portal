@@ -12,7 +12,8 @@ datasource db {
 }
 
 model Department {
-  id               Int          @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
   name             String
   description      String?
   parentDept       Department?  @relation("SubDepartments", fields: [parentId], references: [id])
@@ -24,32 +25,54 @@ model Department {
 }
 
 model LoginDetails {
-  id         Int      @id @default(autoincrement())
-  username   String   @unique
-  password   String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId Int      @unique
+  id             Int      @id @default(autoincrement())
+  username       String   @unique
+  password       String
+  employee       Employee @relation(fields: [employeeId], references: [id])
+  employeeId     Int      @unique
+  reset_required Boolean  @default(true)
 }
 
 model Employee {
-  id               Int               @id @default(autoincrement())
-  email            String            @unique
+  id               Int                @id @default(autoincrement())
+  email            String             @unique
   firstName        String
+  middleName       String
   lastName         String
-  hiringDate       DateTime          @default(now())
-  department       Department        @relation("DepartmentEmployees", fields: [departmentId], references: [id])
+  hiringDate       DateTime           @default(now())
+  nationalId       String?
+  nationality      String
+  resignationDate  DateTime?
+  phoneNumber      String?
+  department       Department         @relation("DepartmentEmployees", fields: [departmentId], references: [id])
   departmentId     Int
-  project          Department?       @relation("SubDepartmentEmployees", fields: [projectId], references: [id])
+  project          Department?        @relation("SubDepartmentEmployees", fields: [projectId], references: [id])
   projectId        Int?
   positionId       Int?
-  position         Position?         @relation(fields: [positionId], references: [id])
-  manager          Employee?         @relation("ManagerEmployees", fields: [managerId], references: [id])
+  position         Position?          @relation(fields: [positionId], references: [id])
+  manager          Employee?          @relation("ManagerEmployees", fields: [managerId], references: [id])
   managerId        Int?
-  subordinates     Employee[]        @relation("ManagerEmployees")
-  vacationBalance  Int               @default(21)
+  subordinates     Employee[]         @relation("ManagerEmployees")
+  vacationBalance  Int                @default(21)
   VacationRequest  VacationRequest[]
-  approvedRequests VacationRequest[] @relation("approvedByManager")
+  approvedRequests VacationRequest[]  @relation("approvedByManager")
   LoginDetails     LoginDetails?
+  documents        EmployeeDocuments?
+}
+
+model EmployeeDocuments {
+  id                   Int      @id @default(autoincrement())
+  employee             Employee @relation(fields: [employeeId], references: [id])
+  employeeId           Int      @unique
+  medicalInsuranceCard String?
+  criminalRecord       String?
+  nationalId           String?
+  birthCertificate     String?
+  educationDegree      String?
+  millitaryCertificate String?
+  insuranceProof       String?
+  workPermit           String?
+  personalPhoto        String?
 }
 
 model Position {

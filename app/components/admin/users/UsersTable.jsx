@@ -1,6 +1,12 @@
 "use client";
 
-import { DataGrid } from "@mui/x-data-grid";
+import {
+	DataGrid,
+	GridToolbarContainer,
+	GridToolbarExport,
+	GridToolbarFilterButton,
+	GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import S from "underscore.string";
@@ -48,6 +54,17 @@ const columns = [
 	},
 	{ field: "email", headerName: "Email", width: 250 },
 ];
+
+function CustomToolbar() {
+	return (
+		<GridToolbarContainer>
+			{/* <GridToolbarQuickFilter /> */}
+			<div className="ml-auto">
+				<GridToolbarExport />
+			</div>
+		</GridToolbarContainer>
+	);
+}
 
 export default function UsersTable() {
 	const [users, setUsers] = useState([]);
@@ -112,8 +129,18 @@ export default function UsersTable() {
 				paginationMode="server"
 				onPaginationModelChange={setPaginationModel}
 				pageSizeOptions={[10]}
+				filterMode="server"
 				rowCount={usersCount}
 				loading={loading}
+				slots={{
+					toolbar: CustomToolbar,
+				}}
+				// onFilterModelChange={(model) => {
+				// 	setFilter({
+				// 		field: model.items[0].field,
+				// 		value: model.items[0].value,
+				// 	});
+				// }}
 			/>
 		</div>
 	);
