@@ -1,6 +1,8 @@
 import AddBulkUsersModal from "@/components/admin/users/addBulkUsersModal/AddBulkUsersModal";
+import AddBulkUsersResultsModal from "@/components/admin/users/addBulkUsersResultsModal/AddBulkUsersResultsModal";
 import AddUserModal from "@/components/admin/users/addUserModal/AddUserModal";
 import UsersTable from "@/components/admin/users/UsersTable";
+import { DataProvider } from "app/contexts/admin/UserPageContext";
 
 import React, { Suspense } from "react";
 import { ClipLoader } from "react-spinners";
@@ -13,7 +15,10 @@ export default async function Page() {
 					<h1 className="text-2xl text-gray-400 font-semibold italic">USERS</h1>
 					<div className="flex flex-row gap-1 self-end">
 						<AddUserModal />
-						<AddBulkUsersModal />
+						<DataProvider>
+							<AddBulkUsersModal />
+							<AddBulkUsersResultsModal />
+						</DataProvider>
 					</div>
 				</div>
 

@@ -384,6 +384,108 @@ export const validateBulkTemplate = (file) => {
 	});
 };
 
-// export const upsertBulkUsers = async (file) => {
+export const upsertBulkUsers = async (data) => {
+	try {
+		// create results object
+		let results = {
+			total: Object.values(data).length,
+			successful: 0,
+			failed: 0,
+			errors: [],
+			wfrs: [],
+		};
 
-// };
+		// loop through records on the sheet
+		const promises = Object.values(data).map(async (employee, idx) => {
+			let errors = [];
+			try {
+				// validate department
+				let existingDepartment = await prisma.department.findUnique({
+					where: {
+						id: employee.departmentId,
+					},
+				});
+
+				if (!existingDepartment) {
+					errors.push("Wrong Department Id.");
+				}
+
+				// validate position
+				let existingPosition = await prisma.position.findUnique({
+					where: { id: employee.positionId },
+				});
+
+				if (!existingPosition) {
+					errors.push("Wrong Position Id.");
+				} else {
+					// validate manager
+					let existingManager = await prisma.employee.findUnique({
+						where: {
+							id: employee.managerId,
+						},
+						select: {
+							position: true,
+							department: true,
+						},
+					});
+
+					if (!existingManager) {
+						errors.push("Wrong Manager Id.");
+						// validate manager & employee department , allowed general_management as external department
+					} else if (
+						existingManager.department.id !== employee.departmentId &&
+						existingManager.department.name !== "general_management"
+					) {
+						errors.push("Wrong Manager Depertment.");
+						// validate position level for manager
+					} else if (
+						parseInt(existingPosition.level) <=
+						parseInt(existingManager.position.level)
+					) {
+						errors.push("Wrong Manager Level Or Position Level Assigned.");
+					}
+				}
+
+				// validate if employee exists already or matching data based on email
+				let existingEmployee = await prisma.employee.findUnique({
+					where: {
+						email: employee.email,
+					},
+				});
+
+				if (existingEmployee) {
+					errors.push("Email exists already.");
+				}
+
+				// check for errors
+				if (errors.length > 0) {
+					throw { value: { index: idx + 1, errors } };
+				}
+
+				// add employee
+				let newEmployee = await createUser({
+					...employee,
+				});
+
+				// update results with success employee
+				results.successful = results.successful + 1;
+				results.wfrs = [...results.wfrs, newEmployee];
+			} catch (error) {
+				// update results with failed employee
+				results.failed = results.failed + 1;
+				results.errors = [...results.errors, error.value];
+			}
+		});
+
+		// Wait for all promises to resolve
+		await Promise.all(promises);
+
+		// return results
+		return results;
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong!" };
+	} finally {
+		await prisma.$disconnect();
+	}
+};

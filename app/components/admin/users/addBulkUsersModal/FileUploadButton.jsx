@@ -4,8 +4,12 @@ import React, { useState } from "react";
 import { styled } from "@mui/joy";
 import { SiMicrosoftexcel } from "react-icons/si";
 import { AiFillCloseCircle } from "react-icons/ai";
-import { validateBulkTemplate } from "@/helpers/admin/user";
+import { exportWFRToCsv, validateBulkTemplate } from "@/helpers/admin/user";
+import { ClipLoader } from "react-spinners";
+import toast from "react-hot-toast";
+import { useData } from "app/contexts/admin/UserPageContext";
 
+// style for hidden input file upload
 const VisuallyHiddenInput = styled("input")`
 	clip: rect(0 0 0 0);
 	clip-path: inset(50%);
@@ -18,15 +22,22 @@ const VisuallyHiddenInput = styled("input")`
 	width: 1px;
 `;
 
-export default function FileUploadButton() {
+export default function FileUploadButton({ closeModal }) {
 	const [selectedFile, setSelectedFile] = useState(null);
+	const [loadingStatus, setLoadingStatus] = useState(false);
 
+	// load data from Provider
+	const { data, setData } = useData();
+
+	// handle the input file change
 	const handleFileChange = (event) => {
 		const file = event.target.files[0];
 		setSelectedFile(file);
 	};
 
+	// function to send data file to server
 	const upsertUsers = async (data) => {
+		setLoadingStatus(true);
 		await fetch("/api/admin/users/upsert_bulk", {
 			method: "POST",
 			body: JSON.stringify({
@@ -40,14 +51,28 @@ export default function FileUploadButton() {
 				if (data.error) {
 					throw new Error(data.error);
 				}
-				toast.success("User Created");
+				toast.success("Operation Completed.");
+
+				// setting results in provider
+				setData(data);
+
+				exportWFRToCsv(data.wfrs);
+
+				// close modal & open results modal
+				closeModal();
+				document.getElementById("bulk_users_results_modal").click();
 			})
 			.catch((error) => {
 				toast.error(error.message);
 			})
-			.finally(() => {});
+			.finally(() => {
+				// reset status values
+				setSelectedFile(null);
+				setLoadingStatus(false);
+			});
 	};
 
+	// handling uploading file & validation
 	const handleUpload = () => {
 		// You can add your file upload logic here, such as sending the file to a server.
 		if (selectedFile) {
@@ -75,7 +100,9 @@ export default function FileUploadButton() {
 		}
 	};
 
-	return selectedFile !== null ? (
+	return loadingStatus ? (
+		<ClipLoader color="#2263b3" className="block m-auto" size={40} />
+	) : selectedFile !== null ? (
 		<div className="flex flex-col gap-4">
 			<div className="flex flex-row justify-between">
 				<h1 className="flex flex-row gap-1">

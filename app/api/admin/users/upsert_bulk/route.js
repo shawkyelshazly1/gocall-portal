@@ -1,3 +1,4 @@
+import { upsertBulkUsers } from "@/helpers/admin/user";
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
@@ -10,10 +11,10 @@ export async function POST(req) {
 
 	let body = await req.json();
 
-	//TODO: upsert users here
+	let results = await upsertBulkUsers(body);
 
-	if (employeeInfo) {
-		return NextResponse.json(employeeInfo);
+	if (results) {
+		return NextResponse.json(results);
 	} else {
 		return new Response("Something went wrong!", { status: 422 });
 	}

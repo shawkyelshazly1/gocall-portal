@@ -37,19 +37,19 @@ model Employee {
   id               Int                @id @default(autoincrement())
   email            String             @unique
   firstName        String
-  middleName       String
+  middleName       String?
   lastName         String
   hiringDate       DateTime           @default(now())
   nationalId       String?
-  nationality      String
+  nationality      String?
   resignationDate  DateTime?
   phoneNumber      String?
   department       Department         @relation("DepartmentEmployees", fields: [departmentId], references: [id])
   departmentId     Int
   project          Department?        @relation("SubDepartmentEmployees", fields: [projectId], references: [id])
   projectId        Int?
-  positionId       Int?
-  position         Position?          @relation(fields: [positionId], references: [id])
+  positionId       Int
+  position         Position           @relation(fields: [positionId], references: [id])
   manager          Employee?          @relation("ManagerEmployees", fields: [managerId], references: [id])
   managerId        Int?
   subordinates     Employee[]         @relation("ManagerEmployees")

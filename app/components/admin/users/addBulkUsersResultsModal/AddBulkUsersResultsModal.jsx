@@ -10,31 +10,36 @@ import {
 } from "@mui/material";
 import React, { forwardRef, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
-import FileUploadButton from "./FileUploadButton";
+import Results from "./Results";
+import { useData } from "app/contexts/admin/UserPageContext";
 
 const Transition = forwardRef(function Transition(props, ref) {
 	return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddBulkUsersModal() {
+export default function AddBulkUsersResultsModal() {
 	const [open, setOpen] = useState(false);
-	
+
+	// data context
+	const { setData } = useData();
 
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
 
 	const handleClose = () => {
+		setData(null);
 		setOpen(false);
 	};
 
 	return (
 		<div>
 			<button
-				className=" bg-secondary text-white py-2 px-4 rounded-xl font-semibold"
+				id="bulk_users_results_modal"
+				className=" bg-secondary text-white py-2 px-4 rounded-xl font-semibold hidden"
 				onClick={handleClickOpen}
 			>
-				ADD BULK
+				Bulk Results
 			</button>
 
 			<Dialog
@@ -45,13 +50,7 @@ export default function AddBulkUsersModal() {
 			>
 				<div className="flex flex-row justify-between w-full items-center gap-2">
 					{" "}
-					<DialogTitle>Add Or Update Users</DialogTitle>
-					<button
-						className="bg-blue-400 text-white font-black py-2 px-4 rounded-lg"
-						onClick={downloadBulkFormatSheet}
-					>
-						Download Template
-					</button>
+					<DialogTitle>Operation Results</DialogTitle>
 					<AiFillCloseCircle
 						className="mr-6 text-gray-600 cursor-pointer"
 						size={25}
@@ -63,7 +62,7 @@ export default function AddBulkUsersModal() {
 
 				<DialogContent>
 					<div className="flex flex-col gap-6">
-						<FileUploadButton closeModal={handleClose} />
+						<Results />
 					</div>
 				</DialogContent>
 			</Dialog>
