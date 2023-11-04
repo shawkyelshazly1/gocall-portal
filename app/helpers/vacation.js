@@ -6,24 +6,31 @@ import moment from "moment";
 export const loadUserVacationBalance = async (userId, vacationBalance) => {
 	let currentYear = new Date().getFullYear();
 	try {
-		let usedBalance = await prisma.vacationRequest.groupBy({
-			by: ["reason"],
-			_count: {
-				approvalStatus: true,
-			},
+		let usedBalance = await prisma.vacationRequest.findMany({
 			where: {
 				employeeId: parseInt(userId),
 				approvalStatus: "approved",
 				from: { gte: new Date(currentYear, 0, 1) },
 				to: { lte: new Date(currentYear, 11, 31) },
 			},
+			select: {
+				reason: true,
+				from: true,
+				to: true,
+			},
 		});
 
-		usedBalance = usedBalance.map((item) => {
-			return { vacationType: item.reason, days: item._count.approvalStatus };
-		});
+		// Calculate the total days for each reason
+		const daysByReason = usedBalance.reduce((result, request) => {
+			const reason = request.reason;
+			const days = Math.ceil(
+				(request.to - request.from + 1) / (1000 * 60 * 60 * 24)
+			); // Calculate the number of days
+			result[reason] = (result[reason] || 0) + days;
+			return result;
+		}, {});
 
-		return usedBalance;
+		return daysByReason;
 	} catch (error) {
 		console.error(error);
 	} finally {
@@ -34,6 +41,63 @@ export const loadUserVacationBalance = async (userId, vacationBalance) => {
 // submit vacation request
 export const submitVacationRequest = async (vacationData, userId) => {
 	try {
+		let days = parseInt(
+			moment(vacationData.to).diff(moment(vacationData.from), "days") + 1
+		);
+
+		let employee = await prisma.employee.findUnique({
+			where: {
+				id: userId,
+			},
+			select: {
+				vacationBalance: true,
+			},
+		});
+
+		if (vacationData.reason !== "casual") {
+			if (vacationData.reason === "annual" && employee.vacationBalance < days) {
+				throw new Error("Insufficient Balance!");
+			}
+		} else {
+			let currentYear = new Date().getFullYear();
+			let usedBalance = await prisma.vacationRequest.findMany({
+				where: {
+					employeeId: parseInt(userId),
+					approvalStatus: "approved",
+					from: { gte: new Date(currentYear, 0, 1) },
+					to: { lte: new Date(currentYear, 11, 31) },
+				},
+				select: {
+					reason: true,
+					from: true,
+					to: true,
+				},
+			});
+
+			// Calculate the total days for each reason
+			const daysByReason = usedBalance.reduce((result, request) => {
+				const reason = request.reason;
+				const days = Math.ceil(
+					(request.to - request.from + 1) / (1000 * 60 * 60 * 24)
+				); // Calculate the number of days
+				result[reason] = (result[reason] || 0) + days;
+				return result;
+			}, {});
+
+			console.log(6 - parseInt(daysByReason["casual"]) < days);
+			console.log(6 - parseInt(daysByReason["casual"]) <= 0);
+			console.log(isNaN(parseInt(daysByReason["casual"])) && days > 6);
+
+			if (
+				6 - parseInt(daysByReason["casual"]) < days ||
+				6 - parseInt(daysByReason["casual"]) <= 0
+			) {
+				throw new Error("Insufficient Casual Balance!");
+			} else if (isNaN(parseInt(daysByReason["casual"])) && days > 6) {
+				throw new Error("Insufficient Casual Balance!");
+			}
+		}
+
 		let vacationRequest = await prisma.vacationRequest.create({
 			data: {
 				...vacationData,
@@ -45,7 +109,7 @@ export const submitVacationRequest = async (vacationData, userId) => {
 
 		// update user balance
 		if (["casual"].includes(vacationData.reason)) {
-			let result = await updateEmployeeVacationBalance(userId);
+			let result = await updateEmployeeVacationBalance(userId, days);
 
 			if (!result) {
 				throw new Error("Something went wrong!");
@@ -55,6 +119,7 @@ export const submitVacationRequest = async (vacationData, userId) => {
 		return vacationRequest;
 	} catch (error) {
 		console.error(error);
+		return { error: error.message };
 	} finally {
 		await prisma.$disconnect();
 	}
@@ -162,6 +227,7 @@ export const loadTeamRequestsCount = async (userId) => {
 		let teamVacationRequestsCount = await prisma.vacationRequest.count({
 			where: {
 				approvalStatus: "pending",
+				reason: "annual",
 				employee: {
 					managerId: parseInt(userId),
 				},
@@ -182,6 +248,7 @@ export const loadTeamVacationRequests = async (userId, skip, take) => {
 		let vacationRequests = await prisma.vacationRequest.findMany({
 			where: {
 				approvalStatus: "pending",
+				reason: "annual",
 				employee: {
 					managerId: parseInt(userId),
 				},
@@ -248,11 +315,16 @@ export const updateRequestStatus = async (data, managerId) => {
 			return null;
 		}
 
-		// update employee Balance
-		let result = await updateEmployeeVacationBalance(request.employee.id);
+		if (data.status === "approved") {
+			// update employee Balance
+			let result = await updateEmployeeVacationBalance(
+				request.employee.id,
+				data.days
+			);
 
-		if (!result) {
-			throw new Error("Something went wrong!");
+			if (!result) {
+				throw new Error("Something went wrong!");
+			}
 		}
 
 		return updatedRequest;
@@ -264,7 +336,7 @@ export const updateRequestStatus = async (data, managerId) => {
 };
 
 // update employee Balance count by -1
-const updateEmployeeVacationBalance = async (employeeId) => {
+const updateEmployeeVacationBalance = async (employeeId, days) => {
 	let employee = await prisma.employee.findUnique({
 		where: { id: parseInt(employeeId) },
 		select: { vacationBalance: true },
@@ -274,7 +346,7 @@ const updateEmployeeVacationBalance = async (employeeId) => {
 		throw new Error("Something went wrong!");
 	}
 
-	let updatedVacationBalance = employee.vacationBalance - 1;
+	let updatedVacationBalance = employee.vacationBalance - days;
 
 	let updatedEmployee = await prisma.employee.update({
 		where: { id: parseInt(employeeId) },

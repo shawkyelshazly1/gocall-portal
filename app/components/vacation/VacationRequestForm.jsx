@@ -53,8 +53,12 @@ export default function VacationRequestForm({ closeModal }) {
 				return await res.json();
 			})
 			.then((data) => {
-				toast.success("Request Submitted.");
-				closeModal();
+				if (data.error) {
+					toast.error(data.error);
+				} else {
+					toast.success("Request Submitted.");
+					closeModal();
+				}
 			})
 			.catch((error) => toast.error("Something went wrong!"));
 	};

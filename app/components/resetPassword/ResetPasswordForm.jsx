@@ -76,7 +76,6 @@ export default function ResetPasswordForm() {
 			}),
 		})
 			.then(async (res) => {
-				console.log(res);
 				return await res.json();
 			})
 			.then((data) => {

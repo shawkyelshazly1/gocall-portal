@@ -73,6 +73,11 @@ export const authOptions = {
 								reset_required: true,
 							},
 						},
+						_count: {
+							select: {
+								subordinates: true,
+							},
+						},
 					},
 				});
 

@@ -97,7 +97,16 @@ export default function TeamVacationRequestsTable() {
 							<>
 								<span
 									onClick={() => {
-										changeRequestStatus(params.row.id, "approved");
+										changeRequestStatus(
+											params.row.id,
+											"approved",
+											parseInt(
+												moment(params.row.to).diff(
+													moment(params.row.from),
+													"days"
+												) + 1
+											)
+										);
 									}}
 									className="cursor-pointer text-white text-center bg-green-500 hover:bg-green-600 text-base py-1 px-3 rounded-full font-semibold capitalize w-24"
 								>
@@ -107,7 +116,16 @@ export default function TeamVacationRequestsTable() {
 								<span
 									className="cursor-pointer text-white text-center bg-red-500 hover:bg-red-600  text-base py-1 px-3 rounded-full font-semibold capitalize w-24"
 									onClick={() => {
-										changeRequestStatus(params.row.id, "denied");
+										changeRequestStatus(
+											params.row.id,
+											"denied",
+											parseInt(
+												moment(params.row.to).diff(
+													moment(params.row.from),
+													"days"
+												) + 1
+											)
+										);
 									}}
 								>
 									Deny
@@ -121,13 +139,14 @@ export default function TeamVacationRequestsTable() {
 	];
 
 	// update request status
-	const changeRequestStatus = async (requestId, status) => {
+	const changeRequestStatus = async (requestId, status, days) => {
 		setLoadingApprovalAction(true);
 		await fetch(`/api/vacation/approval`, {
 			method: "POST",
 			body: JSON.stringify({
 				requestId,
 				status,
+				days,
 			}),
 		})
 			.then(async (res) => {

@@ -11,6 +11,7 @@ export default async function VacationBalanceInfo() {
 
 	// load user consumed balance during the year
 	const usedBalance = await loadUserVacationBalance(user?.id);
+
 	return (
 		<div className="flex flex-col gap-6 w-full">
 			<div className="flex flex-col-reverse md:flex-row justify-between">
@@ -40,12 +41,10 @@ export default async function VacationBalanceInfo() {
 							) : (
 								<>
 									{vacationType === "casual"
-										? usedBalance.length === 0
+										? usedBalance["casual"] === 0 ||
+										  Object.keys(usedBalance).length === 0
 											? 6
-											: 6 -
-													usedBalance?.filter(
-														(item) => item.vacationType === "casual"
-													)[0]?.days || 6 - 0
+											: 6 - parseInt(usedBalance["casual"])
 										: "_"}
 								</>
 							)}
