@@ -25,6 +25,7 @@ const defaultFields = {
 		{ name: "Email Address", value: "email" },
 		{ name: "First Name", value: "firstName" },
 		{ name: "Last Name", value: "lastName" },
+		{ name: "Date Of Birth", value: "birthDate" },
 		{ name: "Phone Number", value: "phoneNumber" },
 		{ name: "Nationality", value: "nationality" },
 		{ name: "National ID", value: "nationalId" },
@@ -49,7 +50,7 @@ const defaultFields = {
 };
 
 export default function ExtractModal({ employees }) {
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(false);
 
 	const [selectedFields, setSelectedFields] = useState({
 		employeeInfo: [

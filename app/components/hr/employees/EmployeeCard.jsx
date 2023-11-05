@@ -10,7 +10,7 @@ export default function EmployeeCard({ employee, openModal }) {
 			<Image
 				src={"/profile_image.png"}
 				className="rounded-full border-[2px] border-[#fbb919]"
-				width={70}
+				width={75}
 				height={60}
 				alt="profile_image"
 			/>

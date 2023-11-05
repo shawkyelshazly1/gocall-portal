@@ -56,10 +56,16 @@ export const searchEmployees = async (searchParams) => {
 
 // load filters values
 export const loadFilters = async () => {
-	let departments = await prisma.department.findMany({});
-	let positions = await prisma.position.findMany({});
+	try {
+		let departments = await prisma.department.findMany({});
+		let positions = await prisma.position.findMany({});
 
-	return { departments, positions };
+		return { departments, positions };
+	} catch (error) {
+		console.error("Error searching for employees:", error);
+	} finally {
+		await prisma.$disconnect();
+	}
 };
 
 // export data to csv
@@ -75,9 +81,14 @@ export const exportEmployeeDetailsToCSV = (data, selectedFields) => {
 				// if field is manager get his first and last name
 				switch (fieldName) {
 					case "manager":
-						result[
-							fieldName
-						] = `${employee[fieldName].firstName} ${employee[fieldName].lastName}`;
+						if (employee[fieldName]) {
+							result[
+								fieldName
+							] = `${employee[fieldName].firstName} ${employee[fieldName].lastName}`;
+						} else {
+							result[fieldName] = "N/A";
+						}
+
 						break;
 					case "position":
 						result[fieldName] = employee[fieldName].title.split("_").join(" ");

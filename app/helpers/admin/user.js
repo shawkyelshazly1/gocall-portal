@@ -4,6 +4,7 @@ import passwordGenerator from "generate-password";
 import exportFromJSON from "export-from-json";
 import S from "underscore.string";
 import { read, utils } from "xlsx";
+import moment from "moment";
 
 // load all users
 export const loadUsers = async (skip, take) => {
@@ -197,7 +198,12 @@ export const loadPositions = async (departmentId) => {
 export const createUser = async (userDetails) => {
 	try {
 		let newEmployee = await prisma.employee.create({
-			data: { ...userDetails },
+			data: {
+				...userDetails,
+				birthDate: Number.isInteger(userDetails.birthDate)
+					? moment("1900-01-01").add(userDetails.birthDate, "days").toDate()
+					: userDetails.birthDate,
+			},
 			select: {
 				id: true,
 				firstName: true,
@@ -222,9 +228,9 @@ export const createUser = async (userDetails) => {
 		// create employee documents
 		let employeeDocuments = await prisma.employeeDocuments.create({
 			data: {
-				employeeId:newEmployee.id
-			}
-		})
+				employeeId: newEmployee.id,
+			},
+		});
 
 		// create employee loginDetails
 		let username = await generateUniqueUsername([
@@ -350,6 +356,7 @@ export const validateBulkTemplate = (file) => {
 		"managerId",
 		"positionId",
 		"projectId",
+		"birthDate",
 		"middleName",
 		"nationalId",
 		"nationality",
@@ -463,6 +470,14 @@ export const upsertBulkUsers = async (data) => {
 
 				if (existingEmployee) {
 					errors.push("Email exists already.");
+				}
+				console.log(employee.birthDate);
+				if (
+					employee?.birthDate === null ||
+					employee?.birthDate === "" ||
+					employee?.birthDate === undefined
+				) {
+					errors.push("Missing or Invalid Date Of birth.");
 				}
 
 				// check for errors

@@ -13,7 +13,6 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import Image from "next/image";
 import { signOut, useSession } from "next-auth/react";
 import S from "underscore.string";
 import { FaUser } from "react-icons/fa";
@@ -21,6 +20,7 @@ import Link from "next/link";
 import logoPic from "@/public/logo.png";
 import AdminMenu from "./AdminMenu";
 import HRMenu from "./HRMenu";
+import Image from "next/image";
 
 const pages = ["home", "vacation"];
 const settings = ["profile", "reset_password", "Logout"];
@@ -151,9 +151,15 @@ export default function Header() {
 						<Tooltip title="Open settings">
 							<IconButton
 								onClick={handleOpenUserMenu}
-								className=" rounded-full w-fit bg-gray-100"
+								className=" rounded-full w-fit "
 							>
-								<FaUser color="#1671b8" />
+								<Image
+									src={"/profile_image.png"}
+									className="rounded-full border-[2px] border-[#fbb919]"
+									width={45}
+									height={35}
+									alt="profile_image"
+								/>
 							</IconButton>
 						</Tooltip>
 						<Menu
