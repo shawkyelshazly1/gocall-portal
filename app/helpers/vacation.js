@@ -84,9 +84,7 @@ export const submitVacationRequest = async (vacationData, userId) => {
 				return result;
 			}, {});
 
-			console.log(6 - parseInt(daysByReason["casual"]) < days);
-			console.log(6 - parseInt(daysByReason["casual"]) <= 0);
-			console.log(isNaN(parseInt(daysByReason["casual"])) && days > 6);
+			
 
 			if (
 				6 - parseInt(daysByReason["casual"]) < days ||

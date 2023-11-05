@@ -20,6 +20,7 @@ import { FaUser } from "react-icons/fa";
 import Link from "next/link";
 import logoPic from "@/public/logo.png";
 import AdminMenu from "./AdminMenu";
+import HRMenu from "./HRMenu";
 
 const pages = ["home", "vacation"];
 const settings = ["profile", "reset_password", "Logout"];
@@ -98,7 +99,9 @@ export default function Header() {
 									</MenuItem>
 								</Link>
 							))}
+							{/* departments menus */}
 							<AdminMenu />
+							<HRMenu />
 						</Menu>
 					</Box>
 
@@ -130,8 +133,9 @@ export default function Header() {
 								</Button>
 							</Link>
 						))}
-
+						{/* departments menus */}
 						<AdminMenu />
+						<HRMenu />
 					</Box>
 
 					<Box

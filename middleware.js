@@ -31,10 +31,18 @@ export default withAuth(
 			return NextResponse.redirect(new URL("/", req.url));
 		}
 
-		// protect admin pages
+		// protect vacation page from agents
 		if (
 			req.nextUrl.pathname.startsWith("/vacation") &&
 			token.user?.position.title === "representative"
+		) {
+			return NextResponse.redirect(new URL("/", req.url));
+		}
+
+		// protect hr pages
+		if (
+			req.nextUrl.pathname.startsWith("/hr") &&
+			token.user?.department.name !== "human_resources"
 		) {
 			return NextResponse.redirect(new URL("/", req.url));
 		}
