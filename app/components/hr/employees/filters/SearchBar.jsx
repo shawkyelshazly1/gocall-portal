@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, useTransition } from "react";
 
-export default function FilterPane() {
+export default function SearchBar() {
 	const [inputValue, setInputValue] = useState("");
 	const [debouncedValue, setDebouncedValue] = useState("");
 	const [mounted, setMounted] = useState(false);
@@ -58,13 +58,13 @@ export default function FilterPane() {
 	}, [debouncedValue, mounted, handleSearchParams]);
 
 	return (
-		<div className="flex flex-col gap-2 w-full">
+		<div className="flex flex-col gap-2 w-2/4 justify-center ">
 			<input
 				type="text"
 				value={inputValue}
 				onChange={(e) => setInputValue(e.target.value)}
 				name="search"
-				className="w-1/4 focus:outline-none border-[2px] border-primary rounded-lg py-1 px-2 focus:border-secondary"
+				className="w-fullfocus:outline-none border-[2px] border-primary rounded-lg py-1 px-2 focus:border-secondary"
 				placeholder="Find Employee"
 			/>
 

@@ -219,6 +219,14 @@ export const createUser = async (userDetails) => {
 			},
 		});
 
+		// create employee documents
+		let employeeDocuments = await prisma.employeeDocuments.create({
+			data: {
+				employeeId:newEmployee.id
+			}
+		})
+
+		// create employee loginDetails
 		let username = await generateUniqueUsername([
 			newEmployee.firstName,
 			newEmployee.lastName,

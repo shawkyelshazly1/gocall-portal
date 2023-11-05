@@ -67,7 +67,7 @@ model EmployeeDocuments {
   employeeId           Int      @unique
   medicalInsuranceCard String?
   criminalRecord       String?
-  nationalId           String?
+  nationalIdCard       String?
   birthCertificate     String?
   educationDegree      String?
   millitaryCertificate String?
