@@ -31,13 +31,13 @@ export default withAuth(
 			return NextResponse.redirect(new URL("/", req.url));
 		}
 
-		// protect vacation page from agents
-		if (
-			req.nextUrl.pathname.startsWith("/vacation") &&
-			token.user?.position.title === "representative"
-		) {
-			return NextResponse.redirect(new URL("/", req.url));
-		}
+		// // protect vacation page from agents
+		// if (
+		// 	req.nextUrl.pathname.startsWith("/vacation") &&
+		// 	token.user?.position.title === "representative"
+		// ) {
+		// 	return NextResponse.redirect(new URL("/", req.url));
+		// }
 
 		// protect hr pages
 		if (

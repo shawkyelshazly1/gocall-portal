@@ -80,14 +80,21 @@ export default function VacationRequestForm({ closeModal }) {
 						label="vacationReason"
 						onChange={handleChange}
 					>
-						{vacationTypes.map((vacationType, idx) => (
-							<MenuItem value={vacationType.toLowerCase()} key={idx}>
-								{vacationType
-									.split("_")
-									.map((word) => S(word).capitalize().value())
-									.join(" ")}
-							</MenuItem>
-						))}
+						{vacationTypes
+							.filter(
+								(vacationType) =>
+									data?.user?.position.title !== "representative" ||
+									vacationType === "annual" ||
+									vacationType === "sick"
+							)
+							.map((vacationType, idx) => (
+								<MenuItem value={vacationType.toLowerCase()} key={idx}>
+									{vacationType
+										.split("_")
+										.map((word) => S(word).capitalize().value())
+										.join(" ")}
+								</MenuItem>
+							))}
 					</Select>
 				</FormControl>
 			</Box>
@@ -95,9 +102,23 @@ export default function VacationRequestForm({ closeModal }) {
 				<FormControl fullWidth required>
 					<DatePicker
 						label="From"
+						shouldDisableDate={(date) => {
+							if (vacationReason !== "annual") return false;
+							const sevenDaysFromNow = moment().add(7, "days").startOf("day");
+							return (
+								data?.user?.position.title === "representative" &&
+								date < sevenDaysFromNow
+							);
+						}}
 						onChange={(value) => {
 							setDate({ ...date, from: value.toISOString() });
 						}}
+						minDate={
+							vacationReason === "annual" &&
+							data?.user?.position.title === "representative"
+								? moment().add(7, "days")
+								: undefined
+						}
 					/>
 				</FormControl>
 				<FormControl fullWidth required>
@@ -107,6 +128,7 @@ export default function VacationRequestForm({ closeModal }) {
 							setDate({ ...date, to: value.toISOString() });
 						}}
 						minDate={moment(date.from)}
+						disabled={!date.from}
 					/>
 				</FormControl>
 			</div>

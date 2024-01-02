@@ -12,7 +12,7 @@ export const loginUser = async (username, password) => {
 			!loginDetails ||
 			!(await bcryptjs.compare(password, loginDetails.password))
 		) {
-			return null;
+			return { error: "Invalid username or password!" };
 		}
 
 		// return employee details

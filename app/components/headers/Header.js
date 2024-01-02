@@ -21,6 +21,7 @@ import logoPic from "@/public/logo.png";
 import AdminMenu from "./AdminMenu";
 import HRMenu from "./HRMenu";
 import Image from "next/image";
+import WFMMenu from "./WFMMenu";
 
 const pages = ["home", "vacation"];
 const settings = ["profile", "reset_password", "Logout"];
@@ -59,7 +60,7 @@ export default function Header() {
 						alt="go-call-logo"
 						width={70}
 						height={70}
-						className="hidden md:flex"
+						className="hidden md:flex p-2"
 					/>
 
 					<Box sx={{ display: { xs: "flex", md: "none" } }}>
@@ -102,6 +103,7 @@ export default function Header() {
 							{/* departments menus */}
 							<AdminMenu />
 							<HRMenu />
+							<WFMMenu />
 						</Menu>
 					</Box>
 
@@ -136,6 +138,7 @@ export default function Header() {
 						{/* departments menus */}
 						<AdminMenu />
 						<HRMenu />
+						<WFMMenu />
 					</Box>
 
 					<Box

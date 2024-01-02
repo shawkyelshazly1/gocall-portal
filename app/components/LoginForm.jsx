@@ -30,6 +30,7 @@ export default function LoginForm() {
 
 		if (result.error) {
 			setLoading(false);
+
 			toast.error(result.error);
 		} else {
 			setLoading(false);
@@ -46,8 +47,9 @@ export default function LoginForm() {
 			<div className="flex flex-col gap-6 mb-10 items-center mt-4">
 				<Image
 					src={logoPic}
-					width={260}
-					height={260}
+					width={200}
+					height={200}
+					className="px-4"
 					alt="go-call-logo"
 					onError={(e) => {
 						console.error("Error loading image:", e);

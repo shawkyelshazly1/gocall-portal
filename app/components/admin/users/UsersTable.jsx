@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Stack } from "@mui/material";
+import { Button, Chip, Stack } from "@mui/material";
 import {
 	DataGrid,
 	GridToolbarContainer,
@@ -59,6 +59,28 @@ const columns = [
 	},
 	{ field: "email", headerName: "Email", width: 250 },
 	{
+		field: "status",
+		headerName: "Status",
+		sortable: false,
+		disableExport: false,
+		align: "center",
+		headerAlign: "center",
+		flex: 1,
+		renderCell: (params) => {
+			return params.row.accountStatus === "active" ? (
+				<Chip
+					label={"Active"}
+					className="text-white bg-green-500 font-semibold"
+				/>
+			) : (
+				<Chip
+					label={"Inactive"}
+					className="text-white bg-red-500 font-semibold"
+				/>
+			);
+		},
+	},
+	{
 		field: "actions",
 		headerName: "Actions",
 		sortable: false,
@@ -67,7 +89,12 @@ const columns = [
 		headerAlign: "center",
 		flex: 1,
 		renderCell: (params) => {
-			return <ActionsMenu userId={params.row.id} />;
+			return (
+				<ActionsMenu
+					userId={params.row.id}
+					userStatus={params.row.accountStatus}
+				/>
+			);
 		},
 	},
 ];
@@ -84,6 +111,8 @@ function CustomToolbar() {
 }
 
 export default function UsersTable() {
+	
+
 	const [users, setUsers] = useState([]);
 	const [usersCount, setUsersCount] = useState(0);
 	const [paginationModel, setPaginationModel] = useState({

@@ -10,7 +10,12 @@ export default async function Page() {
 		<div className="w-full container h-full flex flex-col gap-16 relative">
 			<VacationBalanceInfo />
 			<VacationRequestsHistory />
-			{user._count.subordinates < 1 ? <></> : <TeamVacationRequests />}
+			{user._count.subordinates < 1 ||
+			user?.position.title === "team_leader" ? (
+				<></>
+			) : (
+				<TeamVacationRequests />
+			)}
 		</div>
 	);
 }

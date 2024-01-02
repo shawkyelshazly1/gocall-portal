@@ -16,6 +16,7 @@ export const loadUsers = async (skip, take) => {
 				lastName: true,
 				email: true,
 				position: true,
+				accountStatus: true,
 				department: {
 					select: {
 						name: true,
@@ -505,6 +506,71 @@ export const upsertBulkUsers = async (data) => {
 
 		// return results
 		return results;
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong!" };
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+// reset user password
+export const resetUserPassword = async (employeeId, password) => {
+	try {
+		let user = await prisma.employee.findFirst({
+			where: { id: parseInt(employeeId) },
+		});
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		let loginDetails = await prisma.loginDetails.update({
+			where: { employeeId: parseInt(employeeId) },
+			data: { password: await bcryptjs.hash(password, 10) },
+		});
+
+		return loginDetails;
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong!" };
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+export const disableEmployee = async (employeeId) => {
+	try {
+		let user = await prisma.employee.update({
+			where: { id: parseInt(employeeId) },
+			data: { accountStatus: "disabled" },
+		});
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		return user;
+	} catch (error) {
+		console.error(error);
+		return { error: "Something went wrong!" };
+	} finally {
+		await prisma.$disconnect();
+	}
+};
+
+export const activateEmployee = async (employeeId) => {
+	try {
+		let user = await prisma.employee.update({
+			where: { id: parseInt(employeeId) },
+			data: { accountStatus: "active" },
+		});
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		return user;
 	} catch (error) {
 		console.error(error);
 		return { error: "Something went wrong!" };

@@ -7,8 +7,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import Divider from "@mui/material/Divider";
 import ContactPageIcon from "@mui/icons-material/ContactPage";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import LockResetIcon from "@mui/icons-material/LockReset";
-import PersonRemoveIcon from "@mui/icons-material/PersonRemove";
+import ResetPasswordModal from "../resetPasswordModal/ResetPasswordModal";
+import UserStatusActionButton from "../DisableUserActionButton";
+import { useSession } from "next-auth/react";
 
 // menu style
 
@@ -55,7 +56,9 @@ const StyledMenu = styled((props) => (
 	},
 }));
 
-export default function ActionsMenu({ userId }) {
+export default function ActionsMenu({ userId, userStatus }) {
+	const { data } = useSession();
+
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const open = Boolean(anchorEl);
 	const handleClick = (event) => {
@@ -65,7 +68,7 @@ export default function ActionsMenu({ userId }) {
 		setAnchorEl(null);
 	};
 
-	return (
+	return data.user.id !== userId ? (
 		<div>
 			<Button
 				id="demo-customized-button"
@@ -113,27 +116,15 @@ export default function ActionsMenu({ userId }) {
 
 				<Divider sx={{ my: 0.5 }} />
 
-				<MenuItem
-					onClick={() => {
-						console.log("Reset Password for user , userId: ", userId);
-						handleClose();
-					}}
-					disableRipple
-				>
-					<LockResetIcon />
-					Reset Password
-				</MenuItem>
-				<MenuItem
-					onClick={() => {
-						console.log("Delete user profile, userId: ", userId);
-						handleClose();
-					}}
-					disableRipple
-				>
-					<PersonRemoveIcon />
-					Delete
-				</MenuItem>
+				<ResetPasswordModal userId={userId} closeMenu={handleClose} />
+				<UserStatusActionButton
+					userId={userId}
+					closeMenu={handleClose}
+					userStatus={userStatus}
+				/>
 			</StyledMenu>
 		</div>
+	) : (
+		<></>
 	);
 }

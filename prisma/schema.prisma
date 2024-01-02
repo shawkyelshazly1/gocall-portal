@@ -44,7 +44,7 @@ model Employee {
   nationality      String?
   resignationDate  DateTime?
   phoneNumber      String?
-  birthDate        DateTime
+  birthDate        DateTime?
   department       Department         @relation("DepartmentEmployees", fields: [departmentId], references: [id])
   departmentId     Int
   project          Department?        @relation("SubDepartmentEmployees", fields: [projectId], references: [id])
